@@ -27,8 +27,8 @@
   },
   "tabs": [
     {
-      "name": "API Reference",
-      "url": "api-reference"
+      "name": "Connections API",
+      "url": "api-reference/network"
     }
   ],
   "anchors": [
@@ -88,33 +88,33 @@
         {
           "group": "Companies",
           "pages": [
-            "companies/list-all-companies",
-            "companies/get-a-company"
+            "api-reference/network/companies/list-all-companies",
+            "api-reference/network/companies/get-a-company"
           ]
         },
         {
           "group": "Company",
           "pages": [
-            "company/get-company",
-            "company/update-company"
+            "api-reference/network/company/get-company",
+            "api-reference/network/company/update-company"
           ]
         },
         {
           "group": "Connections",
           "pages": [
-            "connections/list-connections",
-            "connections/get-a-connection"
+            "api-reference/network/connections/list-connections",
+            "api-reference/network/connections/get-a-connection"
           ]
         },
         {
           "group": "invitations",
           "pages": [
-            "invitations/get-apinetworkinvitations",
-            "invitations/post-apinetworkinvitations",
-            "invitations/get-apinetworkinvitationssent",
-            "invitations/get-apinetworkinvitationscode",
-            "invitations/post-apinetworkinvitations-1",
-            "invitations/delete-apinetworkinvitations"
+            "api-reference/network/invitations/get-apinetworkinvitations",
+            "api-reference/network/invitations/post-apinetworkinvitations",
+            "api-reference/network/invitations/get-apinetworkinvitationssent",
+            "api-reference/network/invitations/get-apinetworkinvitationscode",
+            "api-reference/network/invitations/post-apinetworkinvitations-1",
+            "api-reference/network/invitations/delete-apinetworkinvitations"
           ]
         }
       ]
