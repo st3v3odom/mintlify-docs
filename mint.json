@@ -81,6 +81,43 @@
         "api-reference/endpoint/create",
         "api-reference/endpoint/delete"
       ]
+    },
+    {
+      "group": "Connections API",
+      "pages": [
+        {
+          "group": "Companies",
+          "pages": [
+            "companies/list-all-companies",
+            "companies/get-a-company"
+          ]
+        },
+        {
+          "group": "Company",
+          "pages": [
+            "company/get-company",
+            "company/update-company"
+          ]
+        },
+        {
+          "group": "Connections",
+          "pages": [
+            "connections/list-connections",
+            "connections/get-a-connection"
+          ]
+        },
+        {
+          "group": "invitations",
+          "pages": [
+            "invitations/get-apinetworkinvitations",
+            "invitations/post-apinetworkinvitations",
+            "invitations/get-apinetworkinvitationssent",
+            "invitations/get-apinetworkinvitationscode",
+            "invitations/post-apinetworkinvitations-1",
+            "invitations/delete-apinetworkinvitations"
+          ]
+        }
+      ]
     }
   ],
   "footerSocials": {
