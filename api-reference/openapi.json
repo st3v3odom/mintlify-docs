@@ -1,195 +1,1031 @@
 {
-  "openapi": "3.0.1",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+    "title": "Network API",
+    "description": "This documentation is a technical manual for the ActiveProspect Network API. It is primarily intended to be read by software\ndevelopers who want to integrate another system with the network.\n\nThe API is RESTful and speaks JSON over HTTPS. In general, anything that can be accomplished by pointing and\nclicking in ActiveProspect application user interfaces can also be done using this API.\n\nIf you have a question, or spot an error in the documentation, or just generally need to speak with someone about the API,\nsend an email to [support@activeprospect.com](mailto:support@activeprospect.com).\n",
+    "termsOfService": "https://activeprospect.com/terms-of-service/",
     "license": {
-      "name": "MIT"
+      "name": "None"
     },
-    "version": "1.0.0"
+    "version": "0.0.1"
   },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
+  "swagger": "2.0",
+  "produces": [
+    "application/xml",
+    "application/json",
+    "application/octet-stream",
+    "text/plain"
   ],
+  "securityDefinitions": {
+    "Basic": {
+      "type": "basic",
+      "description": "Username is ignored, but you must still provide one. You may use 'X' in place of a user name.\nYour API key goes in the password.\n"
+    }
+  },
   "security": [
     {
-      "bearerAuth": []
+      "Basic": [
+
+      ]
+    }
+  ],
+  "host": "example.org",
+  "tags": [
+    {
+      "name": "invitations",
+      "description": "Operations about invitations"
+    },
+    {
+      "name": "Company",
+      "description": "This resource is for working with your company.\n"
+    },
+    {
+      "name": "Companies",
+      "description": "This resource serves as a directory of companies that have chosen to appear on the network. A company\nprofile describes a business who participates in the consent-based marketing industry.\n\nTo connect with a company, create a new connection invitation. Once recipient accepts your invitation,\na new connection will appear in the connections resource.\n"
+    },
+    {
+      "name": "Connections",
+      "description": "A connection is made when one company on the network invites another to connect and\nthe receiving company accepts the invitation.\n\nThe owner of an offer can share it with other accounts on the network to which the owner is connected.\nThat gives the other account permission to participate in the offer. If it's a buyer-owned offer, the\nbuyer shares an offer with their sellers. And those sellers share it with theirs, and so on. If it's a\nseller-owned offer, the seller shares it with their buyers. When the owner of an offer shares it with\nanother company on the network, an “Offer Share” is created.\n"
+    },
+    {
+      "name": "Invitations",
+      "description": "Invitations are the primary means two companies becoming connected. A company in the network invites\nanother company to connect. Invitations are emailed to the recipient of the invitation. The recipient\ncan accept or simply take no action.\n\nIf the recipient of the invitation does not belong to an existing company within the network, the\nrecipient will be prompted to create a new account.\n\nIf the recipient is already a member of the network and has memberships with multiple companies, the\nrecipient will be prompted to select the company with which they would like to connect.\n"
     }
   ],
   "paths": {
-    "/plants": {
+    "/api/network/companies": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
+        "summary": "List all companies",
+        "description": "List all companies",
+        "produces": [
+          "application/json"
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Network_CompanyProfileEntity"
               }
             }
           }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
         },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
+        "tags": [
+          "Companies"
+        ],
+        "operationId": "getApiNetworkCompanies"
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/api/network/companies/{id}": {
+      "get": {
+        "summary": "Get a company",
+        "description": "Get a company",
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
-            "name": "id",
             "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "name": "id",
+            "description": "ID of the company to get",
+            "type": "string",
+            "required": true
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Network_CompanyProfileEntity"
+            }
+          }
+        },
+        "tags": [
+          "Companies"
+        ],
+        "operationId": "getApiNetworkCompaniesId"
+      }
+    },
+    "/api/network/company": {
+      "put": {
+        "summary": "Update company",
+        "description": "Update company",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "allow_invites_from",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "buyers",
+                "sellers",
+                "publishers"
+              ]
+            },
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "legal_name",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "logo_url",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "primary_business",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Ad Agency",
+                "Consumer Packaged Goods",
+                "Education",
+                "Financial Services",
+                "Home Services",
+                "Insurance",
+                "Media",
+                "Recruiting",
+                "Other"
+              ]
+            },
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "role",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "buys",
+                "generates",
+                "sells",
+                "other"
+              ]
+            },
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "visible_to",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "buyers",
+                "sellers",
+                "publishers"
+              ]
+            },
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "website_url",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "mailing_address[address_1]",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "mailing_address[address_2]",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "mailing_address[city]",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "mailing_address[postal_code]",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "mailing_address[state]",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Network_CompanyEntity"
+            }
           },
           "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorEntity"
+            }
+          }
+        },
+        "tags": [
+          "Company"
+        ],
+        "operationId": "putApiNetworkCompany"
+      },
+      "get": {
+        "summary": "Get company",
+        "description": "Get company",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Network_CompanyEntity"
+            }
+          }
+        },
+        "tags": [
+          "Company"
+        ],
+        "operationId": "getApiNetworkCompany"
+      }
+    },
+    "/api/network/connections": {
+      "get": {
+        "summary": "List connections",
+        "description": "List connections",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Network_ConnectionEntity"
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Connections"
+        ],
+        "operationId": "getApiNetworkConnections"
+      }
+    },
+    "/api/network/connections/{id}": {
+      "get": {
+        "summary": "Get a connection",
+        "description": "Get a connection",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the connection to get",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Network_ConnectionEntity"
+            }
+          }
+        },
+        "tags": [
+          "Connections"
+        ],
+        "operationId": "getApiNetworkConnectionsId"
+      }
+    },
+    "/api/network/invitations": {
+      "post": {
+        "description": "Invite to connect",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "email",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "inviter_id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "registration_path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Invite to connect",
+            "schema": {
+              "$ref": "#/definitions/Network_ConnectionInvitationEntity"
+            }
+          }
+        },
+        "tags": [
+          "invitations"
+        ],
+        "operationId": "postApiNetworkInvitations"
+      },
+      "get": {
+        "description": "List received invitations",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "List received invitations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Network_ConnectionInvitationEntity"
+              }
+            }
+          }
+        },
+        "tags": [
+          "invitations"
+        ],
+        "operationId": "getApiNetworkInvitations"
+      }
+    },
+    "/api/network/invitations/sent": {
+      "get": {
+        "description": "List sent invitations",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "List sent invitations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Network_ConnectionInvitationEntity"
+              }
+            }
+          }
+        },
+        "tags": [
+          "invitations"
+        ],
+        "operationId": "getApiNetworkInvitationsSent"
+      }
+    },
+    "/api/network/invitations/code/{code}": {
+      "get": {
+        "description": "Get an invitation",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Code of the invitation",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get an invitation",
+            "schema": {
+              "$ref": "#/definitions/Network_ConnectionInvitationEntity"
+            }
+          }
+        },
+        "tags": [
+          "invitations"
+        ],
+        "operationId": "getApiNetworkInvitationsCodeCode"
+      }
+    },
+    "/api/network/invitations/{id}": {
+      "delete": {
+        "description": "Decline an invitation",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Decline an invitation",
+            "schema": {
+              "$ref": "#/definitions/Network_ConnectionInvitationEntity"
+            }
+          }
+        },
+        "tags": [
+          "invitations"
+        ],
+        "operationId": "deleteApiNetworkInvitationsId"
+      },
+      "post": {
+        "description": "Accept an invitation",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the invitation",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "accepted_by_id",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Accept an invitation",
+            "schema": {
+              "$ref": "#/definitions/Network_ConnectionEntity"
+            }
+          }
+        },
+        "tags": [
+          "invitations"
+        ],
+        "operationId": "postApiNetworkInvitationsId"
       }
     }
   },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+  "definitions": {
+    "Network_CompanyProfileEntity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "ID of this company's profile on the network"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::CompanyProfile"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string",
+          "example": "We've been helping to protect homes longer than any other company in the business. Reliable service, innovative features & peace of mind from America's top security provider.",
+          "description": "The description of the company"
+        },
+        "facebook_url": {
+          "type": "string",
+          "example": "https://www.facebook.com/adt",
+          "description": "The URL to the company's Facebook page"
+        },
+        "instagram_url": {
+          "type": "string",
+          "example": "https://www.instagram.com/adt",
+          "description": "The URL to the company's Instagram page"
+        },
+        "lead_verticals": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "Home Services",
+            "enum": [
+              "Auto",
+              "Consumer Packaged Goods",
+              "Education",
+              "Financial Services",
+              "Home Services",
+              "Insurance",
+              "Recruiting",
+              "Other"
+            ]
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
+          "description": "The verticals that this company generates leads for"
+        },
+        "legal_name": {
+          "type": "string",
+          "example": "American District Telegraph",
+          "description": "The legal name of the company"
+        },
+        "linkedin_url": {
+          "type": "string",
+          "example": "https://www.linkedin.com/company/adt",
+          "description": "The URL to the company's LinkedIn page"
+        },
+        "logo_url": {
+          "type": "string",
+          "example": "https://www.adt.com/content/dam/adt7/images/adt-new-logo.svg",
+          "description": "The URL to your company logo. Must be png or SVG with dimentions of 180px wide by 40px high."
+        },
+        "name": {
+          "type": "string",
+          "example": "ADT",
+          "description": "The friendly name of the company. If not specified, the legal name will populate this property."
+        },
+        "primary_business": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "Home Services",
+            "enum": [
+              "Ad Agency",
+              "Consumer Packaged Goods",
+              "Education",
+              "Financial Services",
+              "Home Services",
+              "Insurance",
+              "Media",
+              "Recruiting",
+              "Other"
+            ]
+          },
+          "description": "A list of the industry categories in which this company operates"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "buys",
+            "enum": [
+              "buys",
+              "generates",
+              "sells",
+              "other"
+            ]
+          },
+          "description": "The roles of this company"
+        },
+        "twitter_url": {
+          "type": "string",
+          "example": "https://twitter.com/adt",
+          "description": "The URL to the company's Twitter page"
+        },
+        "website_url": {
+          "type": "string",
+          "example": "https://adt.com",
+          "description": "The URL of the company's corporate website."
+        },
+        "mailing_address": {
+          "$ref": "#/definitions/Network_MailingAddressEntity"
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      }
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at",
+        "lead_verticals",
+        "name",
+        "primary_business",
+        "roles"
+      ],
+      "description": "Network_CompanyProfileEntity model"
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      }
+    "Network_MailingAddressEntity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "BSON::ObjectId"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::MailingAddress"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "address_1": {
+          "type": "string",
+          "example": "1 Town Center Rd",
+          "description": "The street number and street name"
+        },
+        "address_2": {
+          "type": "string",
+          "description": "Unit or suite number"
+        },
+        "city": {
+          "type": "string",
+          "example": "Boca Raton",
+          "description": "The name of the city"
+        },
+        "postal_code": {
+          "type": "string",
+          "example": "33486",
+          "description": "The postal code"
+        },
+        "state": {
+          "type": "string",
+          "example": "Florida",
+          "description": "The locality of the city"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at",
+        "address_1",
+        "city",
+        "postal_code",
+        "state"
+      ]
+    },
+    "Network_CompanyEntity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "ID of this company's profile on the network"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::Company"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string",
+          "example": "We've been helping to protect homes longer than any other company in the business. Reliable service, innovative features & peace of mind from America's top security provider.",
+          "description": "The description of the company"
+        },
+        "facebook_url": {
+          "type": "string",
+          "example": "https://www.facebook.com/adt",
+          "description": "The URL to the company's Facebook page"
+        },
+        "instagram_url": {
+          "type": "string",
+          "example": "https://www.instagram.com/adt",
+          "description": "The URL to the company's Instagram page"
+        },
+        "lead_verticals": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "Home Services",
+            "enum": [
+              "Auto",
+              "Consumer Packaged Goods",
+              "Education",
+              "Financial Services",
+              "Home Services",
+              "Insurance",
+              "Recruiting",
+              "Other"
+            ]
+          },
+          "description": "The verticals that this company generates leads for"
+        },
+        "legal_name": {
+          "type": "string",
+          "example": "American District Telegraph",
+          "description": "The legal name of the company"
+        },
+        "linkedin_url": {
+          "type": "string",
+          "example": "https://www.linkedin.com/company/adt",
+          "description": "The URL to the company's LinkedIn page"
+        },
+        "logo_url": {
+          "type": "string",
+          "example": "https://www.adt.com/content/dam/adt7/images/adt-new-logo.svg",
+          "description": "The URL to your company logo. Must be png or SVG with dimentions of 180px wide by 40px high."
+        },
+        "name": {
+          "type": "string",
+          "example": "ADT",
+          "description": "The friendly name of the company. If not specified, the legal name will populate this property."
+        },
+        "primary_business": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "Home Services",
+            "enum": [
+              "Ad Agency",
+              "Consumer Packaged Goods",
+              "Education",
+              "Financial Services",
+              "Home Services",
+              "Insurance",
+              "Media",
+              "Recruiting",
+              "Other"
+            ]
+          },
+          "description": "A list of the industry categories in which this company operates"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "buys",
+            "enum": [
+              "buys",
+              "generates",
+              "sells",
+              "other"
+            ]
+          },
+          "description": "The roles of this company"
+        },
+        "twitter_url": {
+          "type": "string",
+          "example": "https://twitter.com/adt",
+          "description": "The URL to the company's Twitter page"
+        },
+        "website_url": {
+          "type": "string",
+          "example": "https://adt.com",
+          "description": "The URL of the company's corporate website."
+        },
+        "mailing_address": {
+          "$ref": "#/definitions/Network_MailingAddressEntity"
+        },
+        "account_id": {
+          "type": "string",
+          "example": "615d407995fefd72e4a7592b",
+          "description": "This company's account ID"
+        },
+        "allow_invites_from": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "buyers",
+              "sellers",
+              "publishers"
+            ]
+          },
+          "description": "Connection invitations will be allowed from these types of companies on the network."
+        },
+        "visible_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "buyers",
+              "sellers",
+              "publishers"
+            ]
+          },
+          "description": "Your company profile will be visible to these types of companies on the network."
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at",
+        "lead_verticals",
+        "name",
+        "primary_business",
+        "roles",
+        "account_id",
+        "allow_invites_from",
+        "visible_to"
+      ],
+      "description": "Network_CompanyEntity model"
+    },
+    "ErrorEntity": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "description": "ErrorEntity model"
+    },
+    "Network_ConnectionEntity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "ID of this connection"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::Connection"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "company": {
+          "$ref": "#/definitions/Network_ConnectionCompanyEntity",
+          "readOnly": true,
+          "description": "The company with which you have a connection"
+        },
+        "created_by": {
+          "type": "string",
+          "example": "support@activeprospect.com",
+          "description": "The user who created this connection"
+        },
+        "relationship_type": {
+          "type": "string",
+          "example": "buyer",
+          "enum": [
+            "buyer",
+            "seller"
+          ],
+          "description": "The type of relationship you have with this company"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at",
+        "company",
+        "created_by",
+        "relationship_type"
+      ],
+      "description": "Network_ConnectionEntity model"
+    },
+    "Network_ConnectionCompanyEntity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615a6249885ba7b20a54a144",
+          "description": "ID of this company with which you have a connection"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::ConnectionCompany"
+          ]
+        },
+        "account_id": {
+          "type": "string",
+          "example": "615d407995fefd72e4a7592b",
+          "description": "This company's account ID"
+        },
+        "logo_url": {
+          "type": "string",
+          "example": "https://www.adt.com/content/dam/adt7/images/adt-new-logo.svg",
+          "description": "The URL to your company logo. Must be png or SVG with dimentions of 180px wide by 40px high."
+        },
+        "name": {
+          "type": "string",
+          "example": "SafeStreets",
+          "readOnly": true,
+          "description": "The name of the company with which you have a connection"
+        },
+        "status": {
+          "type": "string",
+          "example": "verified",
+          "enum": [
+            "verified"
+          ],
+          "description": "The verification status of the company."
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "account_id",
+        "name",
+        "status"
+      ]
+    },
+    "Network_ConnectionInvitationEntity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::ConnectionInvitation"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "email": {
+          "type": "string"
+        },
+        "inviter_company": {
+          "$ref": "#/definitions/Network_CompanyEntity"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at"
+      ],
+      "description": "Network_ConnectionInvitationEntity model"
     }
   }
 }
