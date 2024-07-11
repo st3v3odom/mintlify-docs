@@ -1,18 +1,18 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Account's Team",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/ap-black-blue.svg",
+    "light": "/logo/ap-white-blue.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
+    "primary": "#3fb1f2",
     "light": "#07C983",
-    "dark": "#0D9373",
+    "dark": "#69dd9a",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#3fb1f2",
+      "to": "#3fb1f2"
     }
   },
   "topbarLinks": [
@@ -41,11 +41,6 @@
       "name": "API Reference",
       "icon": "square-terminal",
       "url": "api-reference"
-    },
-    {
-      "name": "FAQ",
-      "icon": "question",
-      "url": "faq"
     }
   ],
   "navigation": [
