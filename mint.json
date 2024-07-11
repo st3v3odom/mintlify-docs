@@ -38,14 +38,14 @@
       "url": "https://mintlify.com/docs"
     },
     {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
+      "name": "API Reference",
+      "icon": "square-terminal",
+      "url": "api-reference"
     },
     {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "FAQ",
+      "icon": "question",
+      "url": "faq"
     }
   ],
   "navigation": [
@@ -53,68 +53,69 @@
       "group": "Get Started",
       "pages": [
         "introduction",
-        "quickstart",
-        "development"
-      ]
-    },
-    {
-      "group": "Essentials",
-      "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "quickstart"
       ]
     },
     {
       "group": "API Documentation",
       "pages": [
-        "api-reference/introduction"
+        "api-reference/introduction",
+        {
+          "group": "Connections API",
+          "pages": [
+            {
+              "group": "Companies",
+              "pages": [
+                "api-reference/network/companies/list-all-companies",
+                "api-reference/network/companies/get-a-company"
+              ]
+            },
+            {
+              "group": "Company",
+              "pages": [
+                "api-reference/network/company/get-company",
+                "api-reference/network/company/update-company"
+              ]
+            },
+            {
+              "group": "Connections",
+              "pages": [
+                "api-reference/network/connections/list-connections",
+                "api-reference/network/connections/get-a-connection"
+              ]
+            },
+            {
+              "group": "invitations",
+              "pages": [
+                "api-reference/network/invitations/get-apinetworkinvitations",
+                "api-reference/network/invitations/post-apinetworkinvitations",
+                "api-reference/network/invitations/get-apinetworkinvitationssent",
+                "api-reference/network/invitations/get-apinetworkinvitationscode",
+                "api-reference/network/invitations/post-apinetworkinvitations-1",
+                "api-reference/network/invitations/delete-apinetworkinvitations"
+              ]
+            }
+          ]
+        }
       ]
     },
     {
-      "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
-      ]
+      "group": "FAQ",
+      "pages": ["faq/index"]
     },
     {
-      "group": "Connections API",
+      "group": "Guides",
       "pages": [
         {
-          "group": "Companies",
+          "group": "Conversions",
           "pages": [
-            "api-reference/network/companies/list-all-companies",
-            "api-reference/network/companies/get-a-company"
+            "guide/conversions/tf-payg-to-managed"
           ]
         },
         {
-          "group": "Company",
+          "group": "App Messaging",
           "pages": [
-            "api-reference/network/company/get-company",
-            "api-reference/network/company/update-company"
-          ]
-        },
-        {
-          "group": "Connections",
-          "pages": [
-            "api-reference/network/connections/list-connections",
-            "api-reference/network/connections/get-a-connection"
-          ]
-        },
-        {
-          "group": "invitations",
-          "pages": [
-            "api-reference/network/invitations/get-apinetworkinvitations",
-            "api-reference/network/invitations/post-apinetworkinvitations",
-            "api-reference/network/invitations/get-apinetworkinvitationssent",
-            "api-reference/network/invitations/get-apinetworkinvitationscode",
-            "api-reference/network/invitations/post-apinetworkinvitations-1",
-            "api-reference/network/invitations/delete-apinetworkinvitations"
+            "guide/messaging/sqs"
           ]
         }
       ]
