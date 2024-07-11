@@ -1,46 +1,37 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Account's Team",
+  "name": "Account Documentation",
   "logo": {
-    "dark": "/logo/ap-black-blue.svg",
-    "light": "/logo/ap-white-blue.svg"
+    "dark": "/logo/ap-white-blue.svg",
+    "light": "/logo/ap-black-blue.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
     "primary": "#3fb1f2",
     "light": "#07C983",
-    "dark": "#69dd9a",
+    "dark": "#2ecc71",
     "anchors": {
       "from": "#3fb1f2",
       "to": "#3fb1f2"
     }
   },
-  "topbarLinks": [
-    {
-      "name": "Support",
-      "url": "mailto:hi@mintlify.com"
-    }
-  ],
+  "topbarLinks": [],
   "topbarCtaButton": {
     "name": "View App",
     "url": "https://accounts.activeprospect.com"
   },
   "tabs": [
-    {
-      "name": "Connections API",
-      "url": "api-reference/network"
-    }
   ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "name": "Network API Docs",
+      "icon": "square-terminal",
+      "url": "api-reference/network"
     },
     {
-      "name": "API Reference",
-      "icon": "square-terminal",
-      "url": "api-reference"
+      "name": "SQS Messages",
+      "icon": "book-open-cover",
+      "url": "guide/messaging/sqs"
     }
   ],
   "navigation": [
