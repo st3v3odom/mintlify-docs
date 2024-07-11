@@ -2,8 +2,8 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Account Documentation",
   "logo": {
-    "dark": "/logo/ap-white-blue.svg",
-    "light": "/logo/ap-black-blue.svg"
+    "dark": "/logo/ap-full-black-blue.png",
+    "light": "/logo/ap-full-black-blue.png"
   },
   "favicon": "/favicon.svg",
   "colors": {
