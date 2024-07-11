@@ -31,15 +31,19 @@
     {
       "name": "SQS Messages",
       "icon": "book-open-cover",
-      "url": "guide/messaging/sqs"
+      "url": "guide/messaging"
+    },
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/activeprospect/sso"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "",
       "pages": [
-        "introduction",
-        "quickstart"
+        "introduction"
       ]
     },
     {
