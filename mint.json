@@ -30,12 +30,12 @@
     },
     {
       "name": "Network API Docs",
-      "icon": "square-terminal",
+      "icon": "book-open-cover",
       "url": "api-reference/network"
     },
     {
       "name": "SQS Messages",
-      "icon": "book-open-cover",
+      "icon": "rectangle-list",
       "url": "guide/messaging"
     },
     {
@@ -111,6 +111,12 @@
           "group": "Product Offerings",
           "pages": [
             "guide/product-offerings/overview"
+          ]
+        },
+        {
+          "group": "Registration",
+          "pages": [
+            "guide/registration/overview"
           ]
         },
         {
