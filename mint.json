@@ -24,6 +24,11 @@
   ],
   "anchors": [
     {
+      "name": "Home",
+      "icon": "home",
+      "url": "introduction"
+    },
+    {
       "name": "Network API Docs",
       "icon": "square-terminal",
       "url": "api-reference/network"
@@ -100,6 +105,12 @@
           "group": "Conversions",
           "pages": [
             "guide/conversions/tf-payg-to-managed"
+          ]
+        },
+        {
+          "group": "Product Offerings",
+          "pages": [
+            "guide/product-offerings/index"
           ]
         },
         {
