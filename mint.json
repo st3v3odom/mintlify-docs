@@ -95,10 +95,6 @@
       ]
     },
     {
-      "group": "FAQ",
-      "pages": ["faq/index"]
-    },
-    {
       "group": "Guides",
       "pages": [
         {
@@ -124,7 +120,8 @@
           "pages": [
             "guide/messaging/sqs"
           ]
-        }
+        },
+        "faq/index"
       ]
     }
   ],

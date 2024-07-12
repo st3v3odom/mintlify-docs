@@ -1,33 +1,57 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'API Reference Notes'
 ---
 
+## Dev Notes
+
+Here are some steps I took to generate these API docs in Mintlify.
+
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  These still have plenty of configuration to do and figure out. I am not sure why the Interactive Playground is not working.
 </Note>
 
-## Welcome
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+### Get the OpenAPI json file from SSO
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file.
-</Card>
+I generated the OpenAPI json file from SSO with:
 
-## Authentication
-
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
 ```
+rake oapi:fetch store=sso-api.json
+```
+
+I had to add this to the Rakefile:
+```
+require 'grape-swagger/rake/oapi_tasks'
+GrapeSwagger::Rake::OapiTasks.new('API')
+```
+
+<Note>
+We will want to automate this. We can use a Github action to run this and commit the file to the Documentation repo.
+
+Mintlify also has this which we might can use. [Multirepo Action](https://github.com/mintlify/multirepo-action)
+</Note>
+
+### Generate MDX Files in Mintlify
+
+[Mintlify Documentation](https://mintlify.com/docs/api-playground/openapi/setup) on generating [MDX](https://mintlify.com/docs/api-playground/mdx/configuration)
+
+They [recommend to autogenerate the files](https://mintlify.com/docs/api-playground/openapi/setup#autogenerate-files-recommended) based on the OpenAPI json file.
+
+I used the following command to generate the MDX files inside the Documenation repo:
+
+`npx @mintlify/scraping@latest openapi-file api-reference/openapi.json -o api-reference/network`
+
+where `api-reference/openapi.json` is the openapi file generated in SSO.
+
+The -o param specifies where to generate the mdx files
+
+#### Generate Navigation Object
+The output of that will generate a navigation object. Copy that. That goes in the mint.json file under navigation.
+
+
+
+```
+npx mintlify-openapi-mdx sso-api.json
+```
+
