@@ -8,13 +8,6 @@
     },
     "version": "0.0.1"
   },
-  "swagger": "2.0",
-  "produces": [
-    "application/xml",
-    "application/json",
-    "application/octet-stream",
-    "text/plain"
-  ],
   "security": [
     {
       "basicAuth": []
