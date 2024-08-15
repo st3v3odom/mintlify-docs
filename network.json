@@ -401,30 +401,6 @@
         "operationId": "getApiNetworkInvitations"
       }
     },
-    "/api/network/invitations/sent": {
-      "get": {
-        "summary": "List sent invitations",
-        "description": "List sent invitations",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "List sent invitations",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Network_ConnectionInvitationEntity"
-              }
-            }
-          }
-        },
-        "tags": [
-          "Invitations"
-        ],
-        "operationId": "getApiNetworkInvitationsSent"
-      }
-    },
     "/api/network/invitations/code/{code}": {
       "get": {
         "summary": "Get an invitation using invite code",
@@ -1023,15 +999,27 @@
           "description": "The name of the person doing the inviting."
         },
         "inviter_company": {
-          "$ref": "#/definitions/Network_CompanyEntity",
-          "description": "An Network Company entity representing the company initiating the invite"
+          "$ref": "#/definitions/Network_CompanyEntity"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "declined",
+            "pending"
+          ],
+          "description": "Invitation status. Pending - Waiting to be accepted or declined. Accepted - Invite accepted and connection created. Declined - Invite declined."
         }
       },
       "required": [
         "id",
         "__type",
         "created_at",
-        "updated_at"
+        "updated_at",
+        "email",
+        "invited_by",
+        "inviter_company",
+        "status"
       ],
       "description": "Network_ConnectionInvitationEntity model"
     }
