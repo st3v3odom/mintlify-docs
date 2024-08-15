@@ -49,46 +49,6 @@
     },
     {
       "group": "API Documentation",
-      "pages": [
-        "api-reference/introduction",
-        {
-          "group": "Connections API",
-          "pages": [
-            {
-              "group": "Companies",
-              "pages": [
-                "api-reference/network/companies/list-all-companies",
-                "api-reference/network/companies/get-a-company"
-              ]
-            },
-            {
-              "group": "Company",
-              "pages": [
-                "api-reference/network/company/get-company",
-                "api-reference/network/company/update-company"
-              ]
-            },
-            {
-              "group": "Connections",
-              "pages": [
-                "api-reference/network/connections/list-connections",
-                "api-reference/network/connections/get-a-connection"
-              ]
-            },
-            {
-              "group": "invitations",
-              "pages": [
-                "api-reference/network/invitations/get-apinetworkinvitations",
-                "api-reference/network/invitations/post-apinetworkinvitations",
-                "api-reference/network/invitations/get-apinetworkinvitationssent",
-                "api-reference/network/invitations/get-apinetworkinvitationscode",
-                "api-reference/network/invitations/post-apinetworkinvitations-1",
-                "api-reference/network/invitations/delete-apinetworkinvitations"
-              ]
-            }
-          ]
-        }
-      ]
     },
     {
       "group": "Guides",
