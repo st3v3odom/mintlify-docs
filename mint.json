@@ -29,7 +29,7 @@
       "url": "introduction"
     },
     {
-      "name": "Network API Docs",
+      "name": "Network API",
       "icon": "book-open-cover",
       "openapi": "/scalar.yml",
       "url": "api-reference/network"
