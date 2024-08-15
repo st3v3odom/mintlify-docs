@@ -31,7 +31,7 @@
     {
       "name": "Network API Docs",
       "icon": "book-open-cover",
-      "openapi": "api-reference/network/network.json",
+      "openapi": "/api-reference/network/network.json",
       "url": "api-reference/network"
     },
     {
