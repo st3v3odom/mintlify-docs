@@ -1,7 +1,7 @@
 {
   "info": {
     "title": "Network API",
-    "description": "This documentation is a technical manual for the ActiveProspect Network API. It is primarily intended to be read by software\ndevelopers who want to integrate another system with the network.\n\nThe API is RESTful and speaks JSON over HTTPS. In general, anything that can be accomplished by pointing and\nclicking in ActiveProspect application user interfaces can also be done using this API.\n\nIf you have a question, or spot an error in the documentation, or just generally need to speak with someone about the API,\nsend an email to [support@activeprospect.com](mailto:support@activeprospect.com).\n",
+    "description": "This set of endpoints currently facilitates the connection of two accounts, also known internally as \"invite to connect\". The guide on Invite to Connect provides more of a conceptual overview and step by step walkthrough of inviting and connecting of two accounts.\n\nIt is called the \"Network API\" because additional functionality will be added besides connecting two companies.\n\nOne technical distinction to be mindful of is the use of the term \"company\" here. Company is different than an account and has its own id, separate from the sso account id.\n\nMost of the parameters for this API requires knowing the company id.\n\n### Authentication\nHTTP Basic Authentication is used.\n\nThe `username` is ignored, but you must still provide one. You may use 'X' in place of a user name.\n\nThe password is the API key of the targeted account.\n\nHere is an example, where `X` is the username and `123456789` is the api key of the account:\n\n```curl\n $ curl -X GET -uX:1234567890 -H 'Accept: application/json' https://account.staging.activeprospect.com/api/network/invitations\n```\n\n### Use by Product Apps (TF/LC/SL/LB)\nThe [Internal API](api/accounts/internal/endpoints) also includes endpoints for Network related operations. These are for machine to machine operations such as creating a connection between two companies and searching for companies. The account api key is used for the initiating account.\n\n",
     "termsOfService": "https://activeprospect.com/terms-of-service/",
     "license": {
       "name": "None"
@@ -15,25 +15,13 @@
     "application/octet-stream",
     "text/plain"
   ],
-  "securityDefinitions": {
-    "Basic": {
-      "type": "basic",
-      "description": "Username is ignored, but you must still provide one. You may use 'X' in place of a user name.\nYour API key goes in the password.\n"
-    }
-  },
   "security": [
     {
-      "Basic": [
-
-      ]
+      "basicAuth": []
     }
   ],
-  "host": "example.org",
+  "host": "localhost:3000",
   "tags": [
-    {
-      "name": "invitations",
-      "description": "Operations about invitations"
-    },
     {
       "name": "Company",
       "description": "This resource is for working with your company.\n"
@@ -55,7 +43,7 @@
     "/api/network/companies": {
       "get": {
         "summary": "List all companies",
-        "description": "List all companies",
+        "description": "List all companies. Not currently implemented.",
         "produces": [
           "application/json"
         ],
@@ -79,7 +67,7 @@
     "/api/network/companies/{id}": {
       "get": {
         "summary": "Get a company",
-        "description": "Get a company",
+        "description": "Get a company. Not currently implemented",
         "produces": [
           "application/json"
         ],
@@ -262,7 +250,7 @@
       },
       "get": {
         "summary": "Get company",
-        "description": "Get company",
+        "description": "Get details on a company",
         "produces": [
           "application/json"
         ],
@@ -282,7 +270,7 @@
     },
     "/api/network/connections": {
       "get": {
-        "summary": "List connections",
+        "summary": "List connections of a company",
         "description": "List connections",
         "produces": [
           "application/json"
@@ -307,7 +295,7 @@
     "/api/network/connections/{id}": {
       "get": {
         "summary": "Get a connection",
-        "description": "Get a connection",
+        "description": "Get details on a connection",
         "produces": [
           "application/json"
         ],
@@ -336,7 +324,8 @@
     },
     "/api/network/invitations": {
       "post": {
-        "description": "Invite to connect",
+        "summary": "Send an invitation to connect",
+        "description": "Send an invitation to connect to an email address",
         "produces": [
           "application/json"
         ],
@@ -347,42 +336,50 @@
           {
             "in": "formData",
             "name": "email",
+            "description": "Email address of the invitee",
             "type": "string",
             "required": true
           },
           {
             "in": "formData",
             "name": "inviter_id",
+            "description": "SSO ID of the user sending the invitation",
             "type": "string",
             "required": true
           },
           {
             "in": "formData",
             "name": "registration_path",
+            "description": "Registration is used to create the proper account if the invitee does not currently have one.",
             "type": "string",
+            "enum": [
+              "leadconduit/seller"
+            ],
             "required": true
           },
           {
             "in": "formData",
             "name": "description",
+            "description": "A note provided by the inviter that will be included in the body of the email",
             "type": "string",
             "required": false
           }
         ],
         "responses": {
           "201": {
-            "description": "Invite to connect",
+            "description": "Send an invitation to connect to an email address",
             "schema": {
               "$ref": "#/definitions/Network_ConnectionInvitationEntity"
             }
           }
         },
         "tags": [
-          "invitations"
+          "Invitations"
         ],
         "operationId": "postApiNetworkInvitations"
       },
       "get": {
+        "summary": "List received invitations",
         "description": "List received invitations",
         "produces": [
           "application/json"
@@ -399,13 +396,14 @@
           }
         },
         "tags": [
-          "invitations"
+          "Invitations"
         ],
         "operationId": "getApiNetworkInvitations"
       }
     },
     "/api/network/invitations/sent": {
       "get": {
+        "summary": "List sent invitations",
         "description": "List sent invitations",
         "produces": [
           "application/json"
@@ -422,14 +420,15 @@
           }
         },
         "tags": [
-          "invitations"
+          "Invitations"
         ],
         "operationId": "getApiNetworkInvitationsSent"
       }
     },
     "/api/network/invitations/code/{code}": {
       "get": {
-        "description": "Get an invitation",
+        "summary": "Get an invitation using invite code",
+        "description": "Get an invitation using the invitation code",
         "produces": [
           "application/json"
         ],
@@ -444,20 +443,21 @@
         ],
         "responses": {
           "200": {
-            "description": "Get an invitation",
+            "description": "Get an invitation using the invitation code",
             "schema": {
               "$ref": "#/definitions/Network_ConnectionInvitationEntity"
             }
           }
         },
         "tags": [
-          "invitations"
+          "Invitations"
         ],
         "operationId": "getApiNetworkInvitationsCodeCode"
       }
     },
     "/api/network/invitations/{id}": {
       "delete": {
+        "summary": "Decline an invitation",
         "description": "Decline an invitation",
         "produces": [
           "application/json"
@@ -480,12 +480,13 @@
           }
         },
         "tags": [
-          "invitations"
+          "Invitations"
         ],
         "operationId": "deleteApiNetworkInvitationsId"
       },
       "post": {
-        "description": "Accept an invitation",
+        "summary": "Accept an invitation",
+        "description": "Accept an invitation to connect companies",
         "produces": [
           "application/json"
         ],
@@ -509,14 +510,14 @@
         ],
         "responses": {
           "201": {
-            "description": "Accept an invitation",
+            "description": "Accept an invitation to connect companies",
             "schema": {
               "$ref": "#/definitions/Network_ConnectionEntity"
             }
           }
         },
         "tags": [
-          "invitations"
+          "Invitations"
         ],
         "operationId": "postApiNetworkInvitationsId"
       }
@@ -922,7 +923,7 @@
         "created_by": {
           "type": "string",
           "example": "support@activeprospect.com",
-          "description": "The user who created this connection"
+          "description": "The user's email who created this connection"
         },
         "relationship_type": {
           "type": "string",
@@ -996,7 +997,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "description": "The id of the invitation. Needed for accepting an invite progammatically"
         },
         "__type": {
           "type": "string",
@@ -1013,10 +1015,16 @@
           "format": "date-time"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "description": "The email address of the person being invited to connect"
+        },
+        "invited_by": {
+          "type": "string",
+          "description": "The name of the person doing the inviting."
         },
         "inviter_company": {
-          "$ref": "#/definitions/Network_CompanyEntity"
+          "$ref": "#/definitions/Network_CompanyEntity",
+          "description": "An Network Company entity representing the company initiating the invite"
         }
       },
       "required": [

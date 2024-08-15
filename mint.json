@@ -31,12 +31,8 @@
     {
       "name": "Network API Docs",
       "icon": "book-open-cover",
+      "openapi": "api-reference/network/network.json",
       "url": "api-reference/network"
-    },
-    {
-      "name": "SQS Messages",
-      "icon": "rectangle-list",
-      "url": "guide/messaging"
     },
     {
       "name": "GitHub",
