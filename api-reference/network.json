@@ -1,4 +1,5 @@
 {
+  "openapi": "3.0.1",
   "info": {
     "title": "Network API",
     "description": "This documentation is a technical manual for the ActiveProspect Network API. It is primarily intended to be read by software\ndevelopers who want to integrate another system with the network.\n\nThe API is RESTful and speaks JSON over HTTPS. In general, anything that can be accomplished by pointing and\nclicking in ActiveProspect application user interfaces can also be done using this API.\n\nIf you have a question, or spot an error in the documentation, or just generally need to speak with someone about the API,\nsend an email to [support@activeprospect.com](mailto:support@activeprospect.com).\n",
