@@ -93,5 +93,11 @@
     "x": "https://x.com/mintlify",
     "github": "https://github.com/mintlify",
     "linkedin": "https://www.linkedin.com/company/mintsearch"
+  },
+  "api": {
+    "baseUrl": "https://account.staging.activeprospect.com/", // string array for multiple base URLs
+    "auth": {
+      "method": "basic"
+    }
   }
 }
