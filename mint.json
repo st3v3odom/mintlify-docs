@@ -95,7 +95,7 @@
     "linkedin": "https://www.linkedin.com/company/mintsearch"
   },
   "api": {
-    "baseUrl": "https://account.staging.activeprospect.com/", // string array for multiple base URLs
+    "baseUrl": "https://account.staging.activeprospect.com/",
     "auth": {
       "method": "basic"
     }
