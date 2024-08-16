@@ -3,6 +3,7 @@
   "info": {
     "title": "Network API",
     "description": "This documentation is a technical manual for the ActiveProspect Network API. It is primarily intended to be read by software\ndevelopers who want to integrate another system with the network.\n\nThe API is RESTful and speaks JSON over HTTPS. In general, anything that can be accomplished by pointing and\nclicking in ActiveProspect application user interfaces can also be done using this API.\n\nIf you have a question, or spot an error in the documentation, or just generally need to speak with someone about the API,\nsend an email to [support@activeprospect.com](mailto:support@activeprospect.com).\n",
+    "termsOfService": "https://activeprospect.com/terms-of-service/",
     "license": {
       "name": "None"
     },
@@ -10,257 +11,289 @@
   },
   "servers": [
     {
-      "url": "https://account.staging.activeprospect.com"
+      "url": "//localhost:3000/"
     }
   ],
   "security": [
     {
-      "basicAuth": []
+      "Basic": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Company",
+      "description": "This resource is for working with your company.\n"
+    },
+    {
+      "name": "Companies",
+      "description": "This resource serves as a directory of companies that have chosen to appear on the network. A company\nprofile describes a business who participates in the consent-based marketing industry.\n\nTo connect with a company, create a new connection invitation. Once recipient accepts your invitation,\na new connection will appear in the connections resource.\n"
+    },
+    {
+      "name": "Connections",
+      "description": "A connection is made when one company on the network invites another to connect and\nthe receiving company accepts the invitation.\n\nThe owner of an offer can share it with other accounts on the network to which the owner is connected.\nThat gives the other account permission to participate in the offer. If it's a buyer-owned offer, the\nbuyer shares an offer with their sellers. And those sellers share it with theirs, and so on. If it's a\nseller-owned offer, the seller shares it with their buyers. When the owner of an offer shares it with\nanother company on the network, an “Offer Share” is created.\n"
+    },
+    {
+      "name": "Invitations",
+      "description": "Invitations are the primary means two companies becoming connected. A company in the network invites\nanother company to connect. Invitations are emailed to the recipient of the invitation. The recipient\ncan accept or simply take no action.\n\nIf the recipient of the invitation does not belong to an existing company within the network, the\nrecipient will be prompted to create a new account.\n\nIf the recipient is already a member of the network and has memberships with multiple companies, the\nrecipient will be prompted to select the company with which they would like to connect.\n"
     }
   ],
   "paths": {
-    "/company": {
+    "/api/network/company": {
       "get": {
-        "summary": "Get company",
-        "description": "Get company",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Network_CompanyEntity"
-            }
-          }
-        },
         "tags": [
           "Company"
         ],
-        "operationId": "getApiNetworkCompany"
+        "summary": "Get company",
+        "description": "Get company",
+        "operationId": "getApiNetworkCompany",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Network_CompanyEntity"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
-  "definitions": {
-    "Network_CompanyEntity": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "example": "615d14ddf52edffc9a52eec4",
-          "description": "ID of this company's profile on the network"
-        },
-        "__type": {
-          "type": "string",
-          "enum": [
-            "Network::Company"
-          ]
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "description": {
-          "type": "string",
-          "example": "We've been helping to protect homes longer than any other company in the business. Reliable service, innovative features & peace of mind from America's top security provider.",
-          "description": "The description of the company"
-        },
-        "facebook_url": {
-          "type": "string",
-          "example": "https://www.facebook.com/adt",
-          "description": "The URL to the company's Facebook page"
-        },
-        "instagram_url": {
-          "type": "string",
-          "example": "https://www.instagram.com/adt",
-          "description": "The URL to the company's Instagram page"
-        },
-        "lead_verticals": {
-          "type": "array",
-          "items": {
+  "components": {
+    "schemas": {
+      "Network_CompanyEntity": {
+        "required": [
+          "__type",
+          "account_id",
+          "allow_invites_from",
+          "created_at",
+          "id",
+          "lead_verticals",
+          "name",
+          "primary_business",
+          "roles",
+          "updated_at",
+          "visible_to"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
             "type": "string",
-            "example": "Home Services",
-            "enum": [
-              "Auto",
-              "Consumer Packaged Goods",
-              "Education",
-              "Financial Services",
-              "Home Services",
-              "Insurance",
-              "Recruiting",
-              "Other"
-            ]
+            "description": "ID of this company's profile on the network",
+            "example": "615d14ddf52edffc9a52eec4"
           },
-          "description": "The verticals that this company generates leads for"
-        },
-        "legal_name": {
-          "type": "string",
-          "example": "American District Telegraph",
-          "description": "The legal name of the company"
-        },
-        "linkedin_url": {
-          "type": "string",
-          "example": "https://www.linkedin.com/company/adt",
-          "description": "The URL to the company's LinkedIn page"
-        },
-        "logo_url": {
-          "type": "string",
-          "example": "https://www.adt.com/content/dam/adt7/images/adt-new-logo.svg",
-          "description": "The URL to your company logo. Must be png or SVG with dimentions of 180px wide by 40px high."
-        },
-        "name": {
-          "type": "string",
-          "example": "ADT",
-          "description": "The friendly name of the company. If not specified, the legal name will populate this property."
-        },
-        "primary_business": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "example": "Home Services",
-            "enum": [
-              "Ad Agency",
-              "Consumer Packaged Goods",
-              "Education",
-              "Financial Services",
-              "Home Services",
-              "Insurance",
-              "Media",
-              "Recruiting",
-              "Other"
-            ]
-          },
-          "description": "A list of the industry categories in which this company operates"
-        },
-        "roles": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "example": "buys",
-            "enum": [
-              "buys",
-              "generates",
-              "sells",
-              "other"
-            ]
-          },
-          "description": "The roles of this company"
-        },
-        "twitter_url": {
-          "type": "string",
-          "example": "https://twitter.com/adt",
-          "description": "The URL to the company's Twitter page"
-        },
-        "website_url": {
-          "type": "string",
-          "example": "https://adt.com",
-          "description": "The URL of the company's corporate website."
-        },
-        "mailing_address": {
-          "$ref": "#/definitions/Network_MailingAddressEntity"
-        },
-        "account_id": {
-          "type": "string",
-          "example": "615d407995fefd72e4a7592b",
-          "description": "This company's account ID"
-        },
-        "allow_invites_from": {
-          "type": "array",
-          "items": {
+          "__type": {
             "type": "string",
             "enum": [
-              "buyers",
-              "sellers",
-              "publishers"
+              "Network::Company"
             ]
           },
-          "description": "Connection invitations will be allowed from these types of companies on the network."
-        },
-        "visible_to": {
-          "type": "array",
-          "items": {
+          "created_at": {
             "type": "string",
-            "enum": [
-              "buyers",
-              "sellers",
-              "publishers"
-            ]
+            "format": "date-time"
           },
-          "description": "Your company profile will be visible to these types of companies on the network."
-        }
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the company",
+            "example": "We've been helping to protect homes longer than any other company in the business. Reliable service, innovative features & peace of mind from America's top security provider."
+          },
+          "facebook_url": {
+            "type": "string",
+            "description": "The URL to the company's Facebook page",
+            "example": "https://www.facebook.com/adt"
+          },
+          "instagram_url": {
+            "type": "string",
+            "description": "The URL to the company's Instagram page",
+            "example": "https://www.instagram.com/adt"
+          },
+          "lead_verticals": {
+            "type": "array",
+            "description": "The verticals that this company generates leads for",
+            "items": {
+              "type": "string",
+              "example": "Home Services",
+              "enum": [
+                "Auto",
+                "Consumer Packaged Goods",
+                "Education",
+                "Financial Services",
+                "Home Services",
+                "Insurance",
+                "Recruiting",
+                "Other"
+              ]
+            }
+          },
+          "legal_name": {
+            "type": "string",
+            "description": "The legal name of the company",
+            "example": "American District Telegraph"
+          },
+          "linkedin_url": {
+            "type": "string",
+            "description": "The URL to the company's LinkedIn page",
+            "example": "https://www.linkedin.com/company/adt"
+          },
+          "logo_url": {
+            "type": "string",
+            "description": "The URL to your company logo. Must be png or SVG with dimentions of 180px wide by 40px high.",
+            "example": "https://www.adt.com/content/dam/adt7/images/adt-new-logo.svg"
+          },
+          "name": {
+            "type": "string",
+            "description": "The friendly name of the company. If not specified, the legal name will populate this property.",
+            "example": "ADT"
+          },
+          "primary_business": {
+            "type": "array",
+            "description": "A list of the industry categories in which this company operates",
+            "items": {
+              "type": "string",
+              "example": "Home Services",
+              "enum": [
+                "Ad Agency",
+                "Consumer Packaged Goods",
+                "Education",
+                "Financial Services",
+                "Home Services",
+                "Insurance",
+                "Media",
+                "Recruiting",
+                "Other"
+              ]
+            }
+          },
+          "roles": {
+            "type": "array",
+            "description": "The roles of this company",
+            "items": {
+              "type": "string",
+              "example": "buys",
+              "enum": [
+                "buys",
+                "generates",
+                "sells",
+                "other"
+              ]
+            }
+          },
+          "twitter_url": {
+            "type": "string",
+            "description": "The URL to the company's Twitter page",
+            "example": "https://twitter.com/adt"
+          },
+          "website_url": {
+            "type": "string",
+            "description": "The URL of the company's corporate website.",
+            "example": "https://adt.com"
+          },
+          "mailing_address": {
+            "$ref": "#/components/schemas/Network_MailingAddressEntity"
+          },
+          "account_id": {
+            "type": "string",
+            "description": "This company's account ID",
+            "example": "615d407995fefd72e4a7592b"
+          },
+          "allow_invites_from": {
+            "type": "array",
+            "description": "Connection invitations will be allowed from these types of companies on the network.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "buyers",
+                "sellers",
+                "publishers"
+              ]
+            }
+          },
+          "visible_to": {
+            "type": "array",
+            "description": "Your company profile will be visible to these types of companies on the network.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "buyers",
+                "sellers",
+                "publishers"
+              ]
+            }
+          }
+        },
+        "description": "Network_CompanyEntity model"
       },
-      "required": [
-        "id",
-        "__type",
-        "created_at",
-        "updated_at",
-        "lead_verticals",
-        "name",
-        "primary_business",
-        "roles",
-        "account_id",
-        "allow_invites_from",
-        "visible_to"
-      ],
-      "description": "Network_CompanyEntity model"
+      "Network_MailingAddressEntity": {
+        "required": [
+          "__type",
+          "address_1",
+          "city",
+          "created_at",
+          "id",
+          "postal_code",
+          "state",
+          "updated_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "BSON::ObjectId"
+          },
+          "__type": {
+            "type": "string",
+            "enum": [
+              "Network::MailingAddress"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "address_1": {
+            "type": "string",
+            "description": "The street number and street name",
+            "example": "1 Town Center Rd"
+          },
+          "address_2": {
+            "type": "string",
+            "description": "Unit or suite number"
+          },
+          "city": {
+            "type": "string",
+            "description": "The name of the city",
+            "example": "Boca Raton"
+          },
+          "postal_code": {
+            "type": "string",
+            "description": "The postal code",
+            "example": "33486"
+          },
+          "state": {
+            "type": "string",
+            "description": "The locality of the city",
+            "example": "Florida"
+          }
+        }
+      }
     },
-    "Network_MailingAddressEntity": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "BSON::ObjectId"
-        },
-        "__type": {
-          "type": "string",
-          "enum": [
-            "Network::MailingAddress"
-          ]
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "address_1": {
-          "type": "string",
-          "example": "1 Town Center Rd",
-          "description": "The street number and street name"
-        },
-        "address_2": {
-          "type": "string",
-          "description": "Unit or suite number"
-        },
-        "city": {
-          "type": "string",
-          "example": "Boca Raton",
-          "description": "The name of the city"
-        },
-        "postal_code": {
-          "type": "string",
-          "example": "33486",
-          "description": "The postal code"
-        },
-        "state": {
-          "type": "string",
-          "example": "Florida",
-          "description": "The locality of the city"
-        }
-      },
-      "required": [
-        "id",
-        "__type",
-        "created_at",
-        "updated_at",
-        "address_1",
-        "city",
-        "postal_code",
-        "state"
-      ]
+    "securitySchemes": {
+      "Basic": {
+        "type": "http",
+        "description": "Username is ignored, but you must still provide one. You may use 'X' in place of a user name.\nYour API key goes in the password.\n",
+        "scheme": "basic"
+      }
     }
-  }
+  },
+  "x-original-swagger-version": "2.0"
 }
