@@ -3,31 +3,21 @@
   "info": {
     "title": "Network API",
     "description": "This documentation is a technical manual for the ActiveProspect Network API. It is primarily intended to be read by software\ndevelopers who want to integrate another system with the network.\n\nThe API is RESTful and speaks JSON over HTTPS. In general, anything that can be accomplished by pointing and\nclicking in ActiveProspect application user interfaces can also be done using this API.\n\nIf you have a question, or spot an error in the documentation, or just generally need to speak with someone about the API,\nsend an email to [support@activeprospect.com](mailto:support@activeprospect.com).\n",
-    "termsOfService": "https://activeprospect.com/terms-of-service/",
     "license": {
       "name": "None"
     },
     "version": "0.0.1"
   },
-  "swagger": "2.0",
-  "produces": [
-    "application/xml",
-    "application/json",
-    "application/octet-stream",
-    "text/plain"
-  ],
-  "securityDefinitions": {
-    "Basic": {
-      "type": "basic",
-      "description": "Username is ignored, but you must still provide one. You may use 'X' in place of a user name.\nYour API key goes in the password.\n"
+  "servers": [
+    {
+      "url": "https://account.staging.activeprospect.com"
     }
-  },
+  ],
   "security": [
     {
-      "Basic": []
+      "basicAuth": []
     }
   ],
-  "host": "localhost:3000",
   "tags": [
     {
       "name": "Company",
