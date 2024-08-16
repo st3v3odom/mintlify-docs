@@ -29,12 +29,6 @@
       "url": "introduction"
     },
     {
-      "name": "Network API",
-      "icon": "book-open-cover",
-      "openapi": "/api-reference/network.json",
-      "url": "api-reference/network"
-    },
-    {
       "name": "GitHub",
       "icon": "github",
       "url": "https://github.com/activeprospect/sso"
