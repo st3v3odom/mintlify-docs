@@ -29,38 +29,18 @@
       "url": "introduction"
     },
     {
+      "name": "Network API",
+      "icon": "book-open-cover",
+      "openapi": "/api-reference/network.json",
+      "url": "api-reference/network"
+    },
+    {
       "name": "GitHub",
       "icon": "github",
       "url": "https://github.com/activeprospect/sso"
     }
   ],
   "navigation": [
-    {
-      "group": "",
-      "pages": [
-        "introduction"
-      ]
-    },
-    {
-      "group": "API Documentation",
-    },
-    {
-      "group": "Guides",
-      "pages": [
-        {
-          "group": "Product Offerings",
-          "pages": [
-            "guide/product-offerings/overview"
-          ]
-        },
-        {
-          "group": "Registration",
-          "pages": [
-            "guide/registration/overview"
-          ]
-        }
-      ]
-    }
   ],
   "footerSocials": {
     "github": "https://github.com/activeprospect/sso"
