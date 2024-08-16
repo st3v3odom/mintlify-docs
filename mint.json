@@ -85,7 +85,7 @@
     {
       "group": "Company",
       "pages": [
-        "api-reference/network`/company/get-company"
+        "api-reference/network/api/network/company/get-company"
       ]
     }
   ],
