@@ -54,12 +54,6 @@
       "group": "Guides",
       "pages": [
         {
-          "group": "Conversions",
-          "pages": [
-            "guide/conversions/tf-payg-to-managed"
-          ]
-        },
-        {
           "group": "Product Offerings",
           "pages": [
             "guide/product-offerings/overview"
@@ -70,14 +64,7 @@
           "pages": [
             "guide/registration/overview"
           ]
-        },
-        {
-          "group": "App Messaging",
-          "pages": [
-            "guide/messaging/sqs"
-          ]
-        },
-        "faq/index"
+        }
       ]
     }
   ],
