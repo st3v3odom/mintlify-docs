@@ -46,12 +46,6 @@
       "name": "Blog",
       "icon": "newspaper",
       "url": "https://mintlify.com/blog"
-    },
-    {
-      "name": "AP API Reference",
-      "openapi": "/api-reference/network.json",
-      "url": "api-reference/network",
-      "icon": "square-terminal"
     }
   ],
   "navigation": [
@@ -86,6 +80,12 @@
         "api-reference/endpoint/get",
         "api-reference/endpoint/create",
         "api-reference/endpoint/delete"
+      ]
+    },
+    {
+      "group": "Company",
+      "pages": [
+        "api-reference/network`/company/get-company"
       ]
     }
   ],
