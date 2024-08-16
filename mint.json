@@ -1,48 +1,91 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Account Documentation",
+  "name": "Starter Kit",
   "logo": {
-    "dark": "/logo/ap-full-black-blue.png",
-    "light": "/logo/ap-full-black-blue.png"
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#3fb1f2",
+    "primary": "#0D9373",
     "light": "#07C983",
-    "dark": "#2ecc71",
+    "dark": "#0D9373",
     "anchors": {
-      "from": "#3fb1f2",
-      "to": "#3fb1f2"
+      "from": "#0D9373",
+      "to": "#07C983"
     }
   },
-  "topbarLinks": [],
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:hi@mintlify.com"
+    }
+  ],
   "topbarCtaButton": {
-    "name": "View App",
-    "url": "https://accounts.activeprospect.com"
+    "name": "Dashboard",
+    "url": "https://dashboard.mintlify.com"
   },
   "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
   ],
   "anchors": [
     {
-      "name": "Home",
-      "icon": "house",
-      "url": "introduction"
-    },
-    {
-      "name": "Network API",
+      "name": "Documentation",
       "icon": "book-open-cover",
-      "openapi": "/api-reference/network.json",
-      "url": "api-reference/network"
+      "url": "https://mintlify.com/docs"
     },
     {
-      "name": "GitHub",
-      "icon": "github",
-      "url": "https://github.com/activeprospect/sso"
+      "name": "Community",
+      "icon": "slack",
+      "url": "https://mintlify.com/community"
+    },
+    {
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://mintlify.com/blog"
     }
   ],
   "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction",
+        "quickstart",
+        "development"
+      ]
+    },
+    {
+      "group": "Essentials",
+      "pages": [
+        "essentials/markdown",
+        "essentials/code",
+        "essentials/images",
+        "essentials/settings",
+        "essentials/navigation",
+        "essentials/reusable-snippets"
+      ]
+    },
+    {
+      "group": "API Documentation",
+      "pages": [
+        "api-reference/introduction"
+      ]
+    },
+    {
+      "group": "Endpoint Examples",
+      "pages": [
+        "api-reference/endpoint/get",
+        "api-reference/endpoint/create",
+        "api-reference/endpoint/delete"
+      ]
+    }
   ],
   "footerSocials": {
-    "github": "https://github.com/activeprospect/sso"
+    "x": "https://x.com/mintlify",
+    "github": "https://github.com/mintlify",
+    "linkedin": "https://www.linkedin.com/company/mintsearch"
   }
 }
