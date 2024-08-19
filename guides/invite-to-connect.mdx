@@ -33,7 +33,7 @@ The response of the invite creation looks like this:.
 
 ### Kafka Response
 
-The Accounts app will send a [Kafka message](/api-endpoint/kafka) when the invite is accepted. You can use this saved invitation id to match the Kafka message with your original invitation. [TODO: add a sample response for the `connection_invitation.accepted` entity when it’s implemented.
+The Accounts app will send a [Kafka message](/api-reference/kafka) when the invite is accepted. You can use this saved invitation id to match the Kafka message with your original invitation. [TODO: add a sample response for the `connection_invitation.accepted` entity when it’s implemented.
 
 ### Other Useful Curl Commands for Testing
 
@@ -47,7 +47,7 @@ If the invitation was successfully sent, you should see it in this listing of al
 curl -X GET 'https://account.staging.activeprospect.com/api/network/invitations/sent' -u 'X:YOURACCOUNTAPIKEYHERE'
 ```
 
-The response will return a list of invitation objects. It is shown above but you can also see it at [this permalink location](https://ap.com/api/entities/networkApiSpec/Network_ConnectionInvitationEntity).
+The response will return a list of invitation objects. More detail in the response can be found in [the API documentation](/api-reference/invitations/list-invitations-sent).
 
 **Fetching Existing Connections**
 
