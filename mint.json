@@ -27,8 +27,7 @@
     },
     {
       "name": "AP API Reference",
-      "openapi": "/api-reference/introduction",
-      "url": "api-reference",
+      "url": "/api-reference/introduction",
       "icon": "square-terminal"
     },
     {
