@@ -18,17 +18,40 @@ Here is how the Account’s side of this can be accomplished using Account’s A
 
 We start the Invite to Connect process by sending an invitation to an email address.
 
+```bash cURL
+curl -X POST 'https://account.staging.activeprospect.com/api/network/invitations' -u 'X:YOURACCOUNTAPIKEYHERE' \
+  --data email=invitee%40newcompany.com \
+  --data registration_path=leadconduit%2Fseller \
+  --data inviter_id=SSOUSERIDOFSENDER \
+  --data description=an%20optional%20message%20from%20the%20inviter.
+```
 
 <aside>
 💡 You can edit all the curl command below by clicking on it and typing. Try replacing the password with the API key of a real staging account and click execute. ‘X’ can be used as the username for all.
+
 </aside>
 
 Here are details on the parameters to send:
 
+```yaml
+type: parameters
+filename: networkApiSpec
+class: formData
+api: /api/network/invitations
+method: post
+
+```
 
 Getting the inviter_id can take some effort. It is not exposed in the UI. That user must belong to the account. Maybe we can add an api endpoint to Internal that returns a user given an email address.
 
 The response of the invite creation looks like this:.
+
+```yaml
+type: entity
+description: The response of the Invite creation
+filename: networkApiSpec
+entity: Network_ConnectionInvitation
+```
 
 **You will want to save the id of the returned invitation.** The LC ADR proposes a field for this.
 
@@ -40,6 +63,18 @@ The Accounts app will send a [Kafka message](https://www.notion.so/Topics-6815f8
 
 We can programmatically accept an invitation for testing purposes. This is useful in triggering the Kafka message to be sent.
 
+```yaml
+type: curl
+description: Accept an invitation
+endpoint: https://account.staging.activeprospect.com/api/network/invitations/YOURINVITATIONID
+method: POST
+rows: 3
+auth:
+ type: basic
+ username: X
+ password: YOURACCOUNTAPIKEYHERE
+```
+
 ### Other Useful Curl Commands for Testing
 
 These endpoints below can be helpful to when testing your work.
@@ -48,13 +83,44 @@ These endpoints below can be helpful to when testing your work.
 
 If the invitation was successfully sent, you should see it in this listing of all invitations sent with this request.
 
+```yaml
+type: curl
+description: Fetch invitations for an account.
+instructions:
+endpoint: https://account.staging.activeprospect.com/api/network/invitations/sent
+method: GET
+auth:
+ type: basic
+ username: X
+ password: YOURACCOUNTAPIKEYHERE
+```
+
 The response will return a list of invitation objects. It is shown above but you can also see it at [this permalink location](https://ap.com/api/entities/networkApiSpec/Network_ConnectionInvitationEntity).
 
 **Fetching Existing Connections**
 
 Once the invitation is accepted, you should see the connection in the account’s list of connections. This request will fetch all existing connections for an account. If an invite has been accepted, you should see the connection in this result.
 
+```yaml
+type: curl
+description: Check existing connections for an account.
+endpoint: https://account.staging.activeprospect.com/api/network/connections
+method: GET
+auth:
+ type: basic
+ username: X
+ password: YOURACCOUNTAPIKEYHERE
+
+```
+
 The response will return a list of all connections. A connection object looks like this:
+
+```yaml
+type: entity
+description: An invitation
+filename: networkApiSpec
+entity: Network_ConnectionInvitation
+```
 
 ## Notes on Remaining Work
 
