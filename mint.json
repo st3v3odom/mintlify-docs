@@ -2,25 +2,19 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "ActiveProspect Account Documentation",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/ap-full-black-blue.png",
+    "light": "/logo/ap-full-black-blue.png"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
+    "primary": "#3fb1f2",
     "light": "#07C983",
-    "dark": "#0D9373",
+    "dark": "#2ecc71",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#3fb1f2",
+      "to": "#3fb1f2"
     }
   },
-  "topbarLinks": [
-    {
-      "name": "Support",
-      "url": "mailto:hi@mintlify.com"
-    }
-  ],
   "topbarCtaButton": {
     "name": "SSO App",
     "url": "https://account.activeprospect.com"
@@ -65,14 +59,6 @@
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
-  },
-  "api": {
-    "baseUrl": "https://account.staging.activeprospect.com/",
-    "auth": {
-      "method": "basic"
-    }
+    "github": "https://github.com/activeprospect/sso"
   }
 }
