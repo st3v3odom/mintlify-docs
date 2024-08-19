@@ -1,40 +1,23 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'Network Related API Documentation'
 ---
-
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
 
 ## Welcome
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nunc id aliquam tincidunt, nisi urna lacinia nunc, nec tincidunt nulla nunc nec nunc. Sed euismod, nisl vel tincidunt aliquam, nunc nunc tincidunt nunc, nec tincidunt nunc nunc nec nunc. Sed euismod, nisl vel tincidunt.
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
-
 ## Authentication
 
 HTTP Basic Authentication is used.
-
-```json
-"security": [
-  {
-    "basicAuth": []
-  }
-]
-```
 
 The `username` is ignored, but you must still provide one. You may use 'X' in place of a user name.
 
 The password is the API key of the targeted account.
 
 Here is an example, where `X` is the username and `123456789` is the api key of the account:
+
+```curl
+  $ curl -X GET -uX:1234567890 -H 'Accept: application/json' https://account.staging.activeprospect.com/api/network/invitations
+```
 
