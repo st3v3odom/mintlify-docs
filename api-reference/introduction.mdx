@@ -10,7 +10,7 @@ description: 'Example section for showcasing API endpoints'
 
 ## Welcome
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nunc id aliquam tincidunt, nisi urna lacinia nunc, nec tincidunt nulla nunc nec nunc. Sed euismod, nisl vel tincidunt aliquam, nunc nunc tincidunt nunc, nec tincidunt nunc nunc nec nunc. Sed euismod, nisl vel tincidunt.
 
 <Card
   title="Plant Store Endpoints"
@@ -22,12 +22,23 @@ There are two ways to build API documentation: [OpenAPI](https://mintlify.com/do
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+HTTP Basic Authentication is used.
 
 ```json
 "security": [
   {
-    "bearerAuth": []
+    "basicAuth": []
   }
 ]
 ```
+
+The `username` is ignored, but you must still provide one. You may use 'X' in place of a user name.
+
+The password is the API key of the targeted account.
+
+Here is an example, where `X` is the username and `123456789` is the api key of the account:
+
+```curl
+  $ curl -X GET -uX:1234567890 -H 'Accept: application/json' https://account.staging.activeprospect.com/api/network/invitations
+```
+
