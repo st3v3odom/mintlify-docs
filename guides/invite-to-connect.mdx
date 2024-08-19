@@ -1,5 +1,3 @@
-# Invite To Connect
-
 This document will walk you through the different steps of an example Invite to Connect flow.
 
 ## Example Flow
@@ -25,55 +23,17 @@ curl -X POST 'https://account.staging.activeprospect.com/api/network/invitations
   --data inviter_id=SSOUSERIDOFSENDER \
   --data description=an%20optional%20message%20from%20the%20inviter.
 ```
-
-<aside>
-💡 You can edit all the curl command below by clicking on it and typing. Try replacing the password with the API key of a real staging account and click execute. ‘X’ can be used as the username for all.
-
-</aside>
-
-Here are details on the parameters to send:
-
-```yaml
-type: parameters
-filename: networkApiSpec
-class: formData
-api: /api/network/invitations
-method: post
-
-```
+You can try out the command and [find more details on this endpoint](api-reference/invitations/send-an-invitation-to-connect) in the API documentation
 
 Getting the inviter_id can take some effort. It is not exposed in the UI. That user must belong to the account. Maybe we can add an api endpoint to Internal that returns a user given an email address.
 
 The response of the invite creation looks like this:.
 
-```yaml
-type: entity
-description: The response of the Invite creation
-filename: networkApiSpec
-entity: Network_ConnectionInvitation
-```
-
 **You will want to save the id of the returned invitation.** The LC ADR proposes a field for this.
 
 ### Kafka Response
 
-The Accounts app will send a [Kafka message](https://www.notion.so/Topics-6815f889d3de442dbba8b3ebb91dd62a?pvs=21) when the invite is accepted. You can use this saved invitation id to match the Kafka message with your original invitation. [TODO: add a sample response for the `connection_invitation.accepted` entity when it’s implemented.
-
-**Triggering a Kafka Message**
-
-We can programmatically accept an invitation for testing purposes. This is useful in triggering the Kafka message to be sent.
-
-```yaml
-type: curl
-description: Accept an invitation
-endpoint: https://account.staging.activeprospect.com/api/network/invitations/YOURINVITATIONID
-method: POST
-rows: 3
-auth:
- type: basic
- username: X
- password: YOURACCOUNTAPIKEYHERE
-```
+The Accounts app will send a [Kafka message](/api-endpoint/kafka) when the invite is accepted. You can use this saved invitation id to match the Kafka message with your original invitation. [TODO: add a sample response for the `connection_invitation.accepted` entity when it’s implemented.
 
 ### Other Useful Curl Commands for Testing
 
@@ -83,16 +43,8 @@ These endpoints below can be helpful to when testing your work.
 
 If the invitation was successfully sent, you should see it in this listing of all invitations sent with this request.
 
-```yaml
-type: curl
-description: Fetch invitations for an account.
-instructions:
-endpoint: https://account.staging.activeprospect.com/api/network/invitations/sent
-method: GET
-auth:
- type: basic
- username: X
- password: YOURACCOUNTAPIKEYHERE
+```bash cURL
+curl -X GET 'https://account.staging.activeprospect.com/api/network/invitations/sent' -u 'X:YOURACCOUNTAPIKEYHERE'
 ```
 
 The response will return a list of invitation objects. It is shown above but you can also see it at [this permalink location](https://ap.com/api/entities/networkApiSpec/Network_ConnectionInvitationEntity).
@@ -101,26 +53,11 @@ The response will return a list of invitation objects. It is shown above but you
 
 Once the invitation is accepted, you should see the connection in the account’s list of connections. This request will fetch all existing connections for an account. If an invite has been accepted, you should see the connection in this result.
 
-```yaml
-type: curl
-description: Check existing connections for an account.
-endpoint: https://account.staging.activeprospect.com/api/network/connections
-method: GET
-auth:
- type: basic
- username: X
- password: YOURACCOUNTAPIKEYHERE
-
+```bash cURL
+curl -X GET 'https://account.staging.activeprospect.com/api/network/connections' -u 'X:YOURACCOUNTAPIKEYHERE'
 ```
 
-The response will return a list of all connections. A connection object looks like this:
-
-```yaml
-type: entity
-description: An invitation
-filename: networkApiSpec
-entity: Network_ConnectionInvitation
-```
+The response will return a list of all connections. More details can be found in [the API documentation](/api-reference/connections/list-connections-of-a-company).
 
 ## Notes on Remaining Work
 
