@@ -1,1 +1,135 @@
-hi
+# Invite To Connect
+
+This document will walk you through the different steps of an example Invite to Connect flow.
+
+## Example Flow
+
+Here is an excerpt from the problem statement in [LeadConduit’s ADR on Invite to Connect](https://github.com/activeprospect/architectural_decision_records/blob/sc-75835/discovery-plan-how-to-handle-the-invite-to/leadconduit/0006-invite-to-connect.md).
+
+> LeadConduit wants to connect seller account sources to their buyer account flows. This is possible using custom sources, but with the new connections feature from the Account's Team, we can connect the actual entity account instead and link submission documents automatically.
+>
+>
+> However, there is a problem when the user is not signed up yet. The account entity does not exist at this point, and we don't want to block the buyer from working on their flow, adding mapping templates, pricing, caps, etc.
+>
+
+Here is how the Account’s side of this can be accomplished using Account’s API endpoints.
+
+**Send an invite**
+
+We start the Invite to Connect process by sending an invitation to an email address.
+
+```bash cURL
+curl -X POST 'https://account.staging.activeprospect.com/api/network/invitations' -u 'X:YOURACCOUNTAPIKEYHERE' \
+  --data email=invitee%40newcompany.com \
+  --data registration_path=leadconduit%2Fseller \
+  --data inviter_id=SSOUSERIDOFSENDER \
+  --data description=an%20optional%20message%20from%20the%20inviter.
+```
+
+<aside>
+💡 You can edit all the curl command below by clicking on it and typing. Try replacing the password with the API key of a real staging account and click execute. ‘X’ can be used as the username for all.
+
+</aside>
+
+Here are details on the parameters to send:
+
+```yaml
+type: parameters
+filename: networkApiSpec
+class: formData
+api: /api/network/invitations
+method: post
+
+```
+
+Getting the inviter_id can take some effort. It is not exposed in the UI. That user must belong to the account. Maybe we can add an api endpoint to Internal that returns a user given an email address.
+
+The response of the invite creation looks like this:.
+
+```yaml
+type: entity
+description: The response of the Invite creation
+filename: networkApiSpec
+entity: Network_ConnectionInvitation
+```
+
+**You will want to save the id of the returned invitation.** The LC ADR proposes a field for this.
+
+### Kafka Response
+
+The Accounts app will send a [Kafka message](https://www.notion.so/Topics-6815f889d3de442dbba8b3ebb91dd62a?pvs=21) when the invite is accepted. You can use this saved invitation id to match the Kafka message with your original invitation. [TODO: add a sample response for the `connection_invitation.accepted` entity when it’s implemented.
+
+**Triggering a Kafka Message**
+
+We can programmatically accept an invitation for testing purposes. This is useful in triggering the Kafka message to be sent.
+
+```yaml
+type: curl
+description: Accept an invitation
+endpoint: https://account.staging.activeprospect.com/api/network/invitations/YOURINVITATIONID
+method: POST
+rows: 3
+auth:
+ type: basic
+ username: X
+ password: YOURACCOUNTAPIKEYHERE
+```
+
+### Other Useful Curl Commands for Testing
+
+These endpoints below can be helpful to when testing your work.
+
+**Fetching Existing Invitations**
+
+If the invitation was successfully sent, you should see it in this listing of all invitations sent with this request.
+
+```yaml
+type: curl
+description: Fetch invitations for an account.
+instructions:
+endpoint: https://account.staging.activeprospect.com/api/network/invitations/sent
+method: GET
+auth:
+ type: basic
+ username: X
+ password: YOURACCOUNTAPIKEYHERE
+```
+
+The response will return a list of invitation objects. It is shown above but you can also see it at [this permalink location](https://ap.com/api/entities/networkApiSpec/Network_ConnectionInvitationEntity).
+
+**Fetching Existing Connections**
+
+Once the invitation is accepted, you should see the connection in the account’s list of connections. This request will fetch all existing connections for an account. If an invite has been accepted, you should see the connection in this result.
+
+```yaml
+type: curl
+description: Check existing connections for an account.
+endpoint: https://account.staging.activeprospect.com/api/network/connections
+method: GET
+auth:
+ type: basic
+ username: X
+ password: YOURACCOUNTAPIKEYHERE
+
+```
+
+The response will return a list of all connections. A connection object looks like this:
+
+```yaml
+type: entity
+description: An invitation
+filename: networkApiSpec
+entity: Network_ConnectionInvitation
+```
+
+## Notes on Remaining Work
+
+- [ ]  Stop deleting invitations after they've been accepted or declined. Add an enum similar to - InvitationRequest with :pending, :accepted, :declined. We need to link an invitation to a connection. We could also add invitation_id to the connection. That may be better as we would only need to setup a Kafka topic for connections.
+- [ ]  Add connection_id to an invitation. This will let LC know which account to use when assigning the source
+- [ ]  Ensure that the Network::ConnectionInvitationEntity  exposes this info
+
+[Shortcut Epics](https://www.notion.so/Shortcut-Epics-a58d04516a3a4ecba732d9855bd6a178?pvs=21)
+
+[Useful Documents](https://www.notion.so/Useful-Documents-98e2672b9f9949a7bbdb0bc3ee6bc3d6?pvs=21)
+
+[definitions](https://www.notion.so/definitions-de18532b692448c781634296ec005636?pvs=21)
