@@ -39,16 +39,16 @@
       ]
     },
     {
+      "group": "Guides",
+      "pages": [
+        "guides/invite-to-connect"
+      ]
+    },
+    {
       "group": "API Documentation",
       "pages": [
         "api-reference/introduction",
         "api-reference/kafka",
-        {
-          "group": "Guides",
-          "pages": [
-            "guides/invite-to-connect"
-          ]
-        },
         {
           "group": "Companies",
           "pages": [
