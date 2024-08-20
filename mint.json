@@ -24,11 +24,6 @@
       "name": "Documentation",
       "icon": "book-open-cover",
       "url": "/"
-    },
-    {
-      "name": "API Reference",
-      "url": "/api-reference/introduction",
-      "icon": "square-terminal"
     }
   ],
   "navigation": [
@@ -42,6 +37,42 @@
       "group": "Guides",
       "pages": [
         "guides/invite-to-connect"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/introduction",
+        "api-reference/kafka",
+        {
+          "group": "Companies",
+          "pages": [
+            "api-reference/network/companies/list-all-companies",
+            "api-reference/network/companies/get-a-company"
+          ]
+        },
+        {
+          "group": "Company",
+          "pages": [
+            "api-reference/network/company/get-company",
+            "api-reference/network/company/update-company"
+          ]
+        },
+        {
+          "group": "Connections",
+          "pages": [
+            "api-reference/network/connections/list-connections-of-a-company",
+            "api-reference/network/connections/get-a-connection"
+          ]
+        },
+        {
+          "group": "Invitations",
+          "pages": [
+            "api-reference/network/invitations/list-received-invitations",
+            "api-reference/network/invitations/send-an-invitation-to-connect",
+            "api-reference/network/invitations/get-an-invitation-using-invite-code"
+          ]
+        }
       ]
     }
   ],
