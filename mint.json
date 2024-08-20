@@ -29,12 +29,6 @@
       "name": "API Reference",
       "url": "/api-reference/introduction",
       "icon": "square-terminal"
-    },
-    {
-      "name": "AP API Reference",
-      "openapi": "/api-reference/network.json",
-      "url": "api-reference",
-      "icon": "square-terminal"
     }
   ],
   "navigation": [
