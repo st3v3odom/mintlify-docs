@@ -59,6 +59,7 @@
         {
           "group": "Company",
           "pages": [
+            "api-reference/network/company/object",
             "api-reference/network/company/get-company",
             "api-reference/network/company/update-company"
           ]
