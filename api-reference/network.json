@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Network API",
-    "description": "This set of endpoints currently facilitates the connection of two accounts, also known internally as \"invite to connect\". The guide on Invite to Connect provides more of a conceptual overview and step by step walkthrough of inviting and connecting of two accounts.\n\nIt is called the \"Network API\" because additional functionality will be added besides connecting two companies.\n\nOne technical distinction to be mindful of is the use of the term \"company\" here. Company is different than an account and has its own id, separate from the sso account id.\n\nMost of the parameters for this API requires knowing the company id.\n\n### Authentication\nHTTP Basic Authentication is used.\n\nThe `username` is ignored, but you must still provide one. You may use 'X' in place of a user name.\n\nThe password is the API key of the targeted account.\n\nHere is an example, where `X` is the username and `123456789` is the api key of the account:\n\n```curl\n $ curl -X GET -uX:1234567890 -H 'Accept: application/json' https://account.staging.activeprospect.com/api/network/invitations\n```\n\n### Use by Product Apps (TF/LC/SL/LB)\nThe [Internal API](api/accounts/internal/endpoints) also includes endpoints for Network related operations. These are for machine to machine operations such as creating a connection between two companies and searching for companies. The account api key is used for the initiating account.\n\n",
+    "description": "This set of endpoints currently facilitates the connection of two accounts, also known internally as \"invite to connect\". The guide on Invite to Connect provides more of a conceptual overview and step by step walkthrough of inviting and connecting of two accounts.\n\nIt is called the \"Network API\" because additional functionality will be added besides connecting two companies.\n\nOne technical distinction to be mindful of is the use of the term \"company\" here. Company is different than an account and has its own id, separate from the sso account id.\n\nMost of the parameters for this API requires knowing the company id.\n\n### Authentication\nHTTP Basic Authentication is used.\n\nThe `username` is ignored, but you must still provide one. You may use 'X' in place of a user name.\n\nThe password is the API key of the targeted account.\n\nHere is an example, where `X` is the username and `123456789` is the api key of the account:\n\n```curl\n $ curl -X GET -uX:1234567890 -H 'Accept: application/json' https://account.staging.activeprospect.com/api/network/invitations\n```\n",
     "termsOfService": "https://activeprospect.com/terms-of-service/",
     "license": {
       "name": "None"
@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "//localhost:3000/"
+      "url": "//account.staging.activeprospect.com/"
     }
   ],
   "security": [
@@ -35,67 +35,13 @@
     {
       "name": "Invitations",
       "description": "Invitations are the primary means two companies becoming connected. A company in the network invites\nanother company to connect. Invitations are emailed to the recipient of the invitation. The recipient\ncan accept or simply take no action.\n\nIf the recipient of the invitation does not belong to an existing company within the network, the\nrecipient will be prompted to create a new account.\n\nIf the recipient is already a member of the network and has memberships with multiple companies, the\nrecipient will be prompted to select the company with which they would like to connect.\n"
+    },
+    {
+      "name": "Errors",
+      "description": "The Errors resource provides standardized error responses for the API. All error responses conform to the [RFC 9457 - Problem Details for HTTP APIs](https://www.rfc-editor.org/rfc/rfc9457.html) specification in order to return consistent and detailed errors.\n\n### Common Errors\n- **400 Bad Request**: The request could not be understood or was missing required parameters.\n- **401 Unauthorized**: Authentication failed or the user does not have permission for the requested operation.\n- **403 Forbidden**: Authentication succeeded but the authenticated user does not have access to the requested resource.\n- **404 Not Found**: The requested resource could not be found.\n- **422 Unprocessable Content**: Validation errors occurred when processing the request.\n- **500 Internal Server Error**: An unexpected error occurred on the server.\n\n### Example Error Response\n```json\n{\n  \"type\": \"about:blank\",\n  \"status\": 422,\n  \"title\": \"Unprocessable Content\",\n  \"detail\": \"The request could not be processed due to validation errors.\",\n  \"errors\": [\n    { \"pointer\": \"#/name\", \"detail\": \"can't be blank\" },\n    { \"pointer\": \"#/email\", \"detail\": \"is invalid\" }\n  ]\n}\n```\n"
     }
   ],
   "paths": {
-    "/api/network/companies": {
-      "get": {
-        "tags": [
-          "Companies"
-        ],
-        "summary": "List all companies",
-        "description": "List all companies. Not currently implemented.",
-        "operationId": "getApiNetworkCompanies",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Network_CompanyProfileEntity"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/network/companies/{id}": {
-      "get": {
-        "tags": [
-          "Companies"
-        ],
-        "summary": "Get a company",
-        "description": "Get a company. Not currently implemented",
-        "operationId": "getApiNetworkCompaniesId",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the company to get",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Network_CompanyProfileEntity"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/network/company": {
       "get": {
         "tags": [
@@ -114,6 +60,36 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
           }
         }
       },
@@ -128,93 +104,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "allow_invites_from": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "enum": [
-                        "buyers",
-                        "sellers",
-                        "publishers"
-                      ]
-                    }
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "legal_name": {
-                    "type": "string"
-                  },
-                  "logo_url": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "primary_business": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "enum": [
-                        "Ad Agency",
-                        "Consumer Packaged Goods",
-                        "Education",
-                        "Financial Services",
-                        "Home Services",
-                        "Insurance",
-                        "Media",
-                        "Recruiting",
-                        "Other"
-                      ]
-                    }
-                  },
-                  "role": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "enum": [
-                        "buys",
-                        "generates",
-                        "sells",
-                        "other"
-                      ]
-                    }
-                  },
-                  "visible_to": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "enum": [
-                        "buyers",
-                        "sellers",
-                        "publishers"
-                      ]
-                    }
-                  },
-                  "website_url": {
-                    "type": "string"
-                  },
-                  "mailing_address[address_1]": {
-                    "type": "string"
-                  },
-                  "mailing_address[address_2]": {
-                    "type": "string"
-                  },
-                  "mailing_address[city]": {
-                    "type": "string"
-                  },
-                  "mailing_address[postal_code]": {
-                    "type": "string"
-                  },
-                  "mailing_address[state]": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/putApiNetworkCompany"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
@@ -232,12 +126,53 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorEntity"
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnprocessableContent"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
                 }
               }
             }
           }
-        }
+        },
+        "x-codegen-request-body-name": "putApiNetworkCompany"
       }
     },
     "/api/network/connections": {
@@ -258,6 +193,36 @@
                   "items": {
                     "$ref": "#/components/schemas/Network_ConnectionEntity"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
                 }
               }
             }
@@ -294,6 +259,46 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
           }
         }
       }
@@ -303,12 +308,28 @@
         "tags": [
           "Invitations"
         ],
-        "summary": "List received invitations",
-        "description": "List received invitations",
+        "summary": "List sent invitations",
+        "description": "List sent invitations",
         "operationId": "getApiNetworkInvitations",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status of the invitation",
+            "schema": {
+              "type": "string",
+              "default": "pending",
+              "enum": [
+                "accepted",
+                "declined",
+                "pending"
+              ]
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "List received invitations",
+            "description": "List sent invitations",
             "content": {
               "application/json": {
                 "schema": {
@@ -316,6 +337,36 @@
                   "items": {
                     "$ref": "#/components/schemas/Network_ConnectionInvitationEntity"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
                 }
               }
             }
@@ -333,29 +384,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "required": [
-                  "email",
-                  "invited_by_id",
-                  "registration_path"
-                ],
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string"
-                  },
-                  "invited_by_id": {
-                    "type": "string"
-                  },
-                  "registration_path": {
-                    "type": "string",
-                    "enum": [
-                      "leadconduit/seller"
-                    ]
-                  },
-                  "description": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/postApiNetworkInvitations"
               }
             }
           },
@@ -371,8 +400,39 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
           }
-        }
+        },
+        "x-codegen-request-body-name": "postApiNetworkInvitations"
       }
     },
     "/api/network/invitations/code/{code}": {
@@ -404,6 +464,46 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
           }
         }
       }
@@ -411,197 +511,6 @@
   },
   "components": {
     "schemas": {
-      "Network_CompanyProfileEntity": {
-        "required": [
-          "__type",
-          "created_at",
-          "id",
-          "lead_verticals",
-          "name",
-          "primary_business",
-          "roles",
-          "updated_at"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "ID of this company's profile on the network",
-            "example": "615d14ddf52edffc9a52eec4"
-          },
-          "__type": {
-            "type": "string",
-            "enum": [
-              "Network::CompanyProfile"
-            ]
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "description": {
-            "type": "string",
-            "description": "The description of the company",
-            "example": "We've been helping to protect homes longer than any other company in the business. Reliable service, innovative features & peace of mind from America's top security provider."
-          },
-          "facebook_url": {
-            "type": "string",
-            "description": "The URL to the company's Facebook page",
-            "example": "https://www.facebook.com/adt"
-          },
-          "instagram_url": {
-            "type": "string",
-            "description": "The URL to the company's Instagram page",
-            "example": "https://www.instagram.com/adt"
-          },
-          "lead_verticals": {
-            "type": "array",
-            "description": "The verticals that this company generates leads for",
-            "items": {
-              "type": "string",
-              "example": "Home Services",
-              "enum": [
-                "Auto",
-                "Consumer Packaged Goods",
-                "Education",
-                "Financial Services",
-                "Home Services",
-                "Insurance",
-                "Recruiting",
-                "Other"
-              ]
-            }
-          },
-          "legal_name": {
-            "type": "string",
-            "description": "The legal name of the company",
-            "example": "American District Telegraph"
-          },
-          "linkedin_url": {
-            "type": "string",
-            "description": "The URL to the company's LinkedIn page",
-            "example": "https://www.linkedin.com/company/adt"
-          },
-          "logo_url": {
-            "type": "string",
-            "description": "The URL to your company logo. Must be png or SVG with dimentions of 180px wide by 40px high.",
-            "example": "https://www.adt.com/content/dam/adt7/images/adt-new-logo.svg"
-          },
-          "name": {
-            "type": "string",
-            "description": "The friendly name of the company. If not specified, the legal name will populate this property.",
-            "example": "ADT"
-          },
-          "primary_business": {
-            "type": "array",
-            "description": "A list of the industry categories in which this company operates",
-            "items": {
-              "type": "string",
-              "example": "Home Services",
-              "enum": [
-                "Ad Agency",
-                "Consumer Packaged Goods",
-                "Education",
-                "Financial Services",
-                "Home Services",
-                "Insurance",
-                "Media",
-                "Recruiting",
-                "Other"
-              ]
-            }
-          },
-          "roles": {
-            "type": "array",
-            "description": "The roles of this company",
-            "items": {
-              "type": "string",
-              "example": "buys",
-              "enum": [
-                "buys",
-                "generates",
-                "sells",
-                "other"
-              ]
-            }
-          },
-          "twitter_url": {
-            "type": "string",
-            "description": "The URL to the company's Twitter page",
-            "example": "https://twitter.com/adt"
-          },
-          "website_url": {
-            "type": "string",
-            "description": "The URL of the company's corporate website.",
-            "example": "https://adt.com"
-          },
-          "mailing_address": {
-            "$ref": "#/components/schemas/Network_MailingAddressEntity"
-          }
-        },
-        "description": "Network_CompanyProfileEntity model"
-      },
-      "Network_MailingAddressEntity": {
-        "required": [
-          "__type",
-          "address_1",
-          "city",
-          "created_at",
-          "id",
-          "postal_code",
-          "state",
-          "updated_at"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "BSON::ObjectId"
-          },
-          "__type": {
-            "type": "string",
-            "enum": [
-              "Network::MailingAddress"
-            ]
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "address_1": {
-            "type": "string",
-            "description": "The street number and street name",
-            "example": "1 Town Center Rd"
-          },
-          "address_2": {
-            "type": "string",
-            "description": "Unit or suite number"
-          },
-          "city": {
-            "type": "string",
-            "description": "The name of the city",
-            "example": "Boca Raton"
-          },
-          "postal_code": {
-            "type": "string",
-            "description": "The postal code",
-            "example": "33486"
-          },
-          "state": {
-            "type": "string",
-            "description": "The locality of the city",
-            "example": "Florida"
-          }
-        }
-      },
       "Network_CompanyEntity": {
         "required": [
           "__type",
@@ -655,9 +564,9 @@
           "lead_verticals": {
             "type": "array",
             "description": "The verticals that this company generates leads for",
+            "example": "Home Services",
             "items": {
               "type": "string",
-              "example": "Home Services",
               "enum": [
                 "Auto",
                 "Consumer Packaged Goods",
@@ -693,9 +602,9 @@
           "primary_business": {
             "type": "array",
             "description": "A list of the industry categories in which this company operates",
+            "example": "Home Services",
             "items": {
               "type": "string",
-              "example": "Home Services",
               "enum": [
                 "Ad Agency",
                 "Consumer Packaged Goods",
@@ -712,9 +621,9 @@
           "roles": {
             "type": "array",
             "description": "The roles of this company",
+            "example": "buys",
             "items": {
               "type": "string",
-              "example": "buys",
               "enum": [
                 "buys",
                 "generates",
@@ -768,18 +677,369 @@
         },
         "description": "Network_CompanyEntity model"
       },
-      "ErrorEntity": {
+      "Network_MailingAddressEntity": {
         "required": [
-          "error"
+          "__type",
+          "address_1",
+          "city",
+          "created_at",
+          "id",
+          "postal_code",
+          "state",
+          "updated_at"
         ],
         "type": "object",
         "properties": {
-          "error": {
-            "type": "object",
-            "properties": {}
+          "id": {
+            "type": "string",
+            "description": "The ID of the record"
+          },
+          "__type": {
+            "type": "string",
+            "enum": [
+              "Network::MailingAddress"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "address_1": {
+            "type": "string",
+            "description": "The street number and street name",
+            "example": "1 Town Center Rd"
+          },
+          "address_2": {
+            "type": "string",
+            "description": "Unit or suite number"
+          },
+          "city": {
+            "type": "string",
+            "description": "The name of the city",
+            "example": "Boca Raton"
+          },
+          "postal_code": {
+            "type": "string",
+            "description": "The postal code",
+            "example": "33486"
+          },
+          "state": {
+            "type": "string",
+            "description": "The locality of the city",
+            "example": "Florida"
+          }
+        }
+      },
+      "Unauthorized": {
+        "required": [
+          "detail",
+          "status",
+          "title",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code generated by the origin server for this occurrence of the problem.\n",
+            "format": "int32",
+            "example": 401
+          },
+          "type": {
+            "type": "string",
+            "description": "A URI reference that identifies the problem type. This URI provides context and additional\ninformation about the specific kind of error that occurred, allowing clients to understand\nthe nature of the problem beyond the status code alone.\n",
+            "example": "about:blank"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type. The `title` is intended to give a brief\noverview of the issue, making it easier for developers and users to quickly understand the nature\nof the problem without needing to delve into technical details.\n",
+            "example": "Unauthorized"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem. The `detail` field\nprovides specific information about what went wrong in this particular instance, helping clients\nunderstand the exact issue and how they might resolve it.\n",
+            "example": "You are not authorized to access this resource."
           }
         },
-        "description": "ErrorEntity model"
+        "description": "**Unauthorized (401)**\n\nThis entity represents an Unauthorized error (HTTP 401 status code).\nAn Unauthorized error occurs when the client attempts to access a resource without\nproper authentication or authorization.\n\nThis error typically happens when:\n- The client fails to provide valid credentials.\n- The credentials provided do not grant the necessary permissions to access the resource.\n\nClients should ensure they are authenticated and have the appropriate permissions\nbefore retrying the request.\n",
+        "x-tags": [
+          "Errors"
+        ]
+      },
+      "NotFound": {
+        "required": [
+          "detail",
+          "status",
+          "title",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code generated by the origin server for this occurrence of the problem.\n",
+            "format": "int32",
+            "example": 404
+          },
+          "type": {
+            "type": "string",
+            "description": "A URI reference that identifies the problem type. This URI provides context and additional\ninformation about the specific kind of error that occurred, allowing clients to understand\nthe nature of the problem beyond the status code alone.\n",
+            "example": "about:blank"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type. The `title` is intended to give a brief\noverview of the issue, making it easier for developers and users to quickly understand the nature\nof the problem without needing to delve into technical details.\n",
+            "example": "Not Found"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem. The `detail` field\nprovides specific information about what went wrong in this particular instance, helping clients\nunderstand the exact issue and how they might resolve it.\n",
+            "example": "The requested resource could not be found."
+          }
+        },
+        "description": "**Not Found (404)**\n\nThis entity represents a Not Found error (HTTP 404 status code).\nA Not Found error occurs when the requested resource could not be found on the server.\nThis might happen if the resource has been deleted or the client has requested a resource\nthat does not exist.\n\nClients should verify the correctness of the requested resource before retrying the request.\n",
+        "x-tags": [
+          "Errors"
+        ]
+      },
+      "InternalServerError": {
+        "required": [
+          "detail",
+          "status",
+          "title",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code generated by the origin server for this occurrence of the problem.\n",
+            "format": "int32",
+            "example": 500
+          },
+          "type": {
+            "type": "string",
+            "description": "A URI reference that identifies the problem type. This URI provides context and additional\ninformation about the specific kind of error that occurred, allowing clients to understand\nthe nature of the problem beyond the status code alone.\n",
+            "example": "about:blank"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type. The `title` is intended to give a brief\noverview of the issue, making it easier for developers and users to quickly understand the nature\nof the problem without needing to delve into technical details.\n",
+            "example": "Internal Server Error"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem. The `detail` field\nprovides specific information about what went wrong in this particular instance, helping clients\nunderstand the exact issue and how they might resolve it.\n",
+            "example": "An unexpected error occurred."
+          }
+        },
+        "description": "**Internal Server Error (500)**\n\nThis entity represents an Internal Server Error (HTTP 500 status code).\nAn Internal Server Error occurs when the server encounters an unexpected condition\nthat prevents it from fulfilling the request.\n\nCommon causes of an Internal Server Error include:\n- Unhandled exceptions or runtime errors within the server.\n- Issues with server configuration or dependencies.\n- Resource limitations, such as memory or disk space constraints.\n\nThis error indicates a problem on the server side that the client cannot resolve.\nClients may need to retry the request later or contact support if the issue persists.\n",
+        "x-tags": [
+          "Errors"
+        ]
+      },
+      "putApiNetworkCompany": {
+        "type": "object",
+        "properties": {
+          "allow_invites_from": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "buyers",
+                "sellers",
+                "publishers"
+              ]
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "legal_name": {
+            "type": "string"
+          },
+          "logo_url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "primary_business": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Ad Agency",
+                "Consumer Packaged Goods",
+                "Education",
+                "Financial Services",
+                "Home Services",
+                "Insurance",
+                "Media",
+                "Recruiting",
+                "Other"
+              ]
+            }
+          },
+          "role": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "buys",
+                "generates",
+                "sells",
+                "other"
+              ]
+            }
+          },
+          "visible_to": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "buyers",
+                "sellers",
+                "publishers"
+              ]
+            }
+          },
+          "website_url": {
+            "type": "string"
+          },
+          "mailing_address": {
+            "type": "object",
+            "properties": {
+              "address_1": {
+                "type": "string"
+              },
+              "address_2": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "postal_code": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "description": "Update company"
+      },
+      "BadRequest": {
+        "required": [
+          "detail",
+          "errors",
+          "status",
+          "title",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code generated by the origin server for this occurrence of the problem.\n",
+            "format": "int32",
+            "example": 400
+          },
+          "type": {
+            "type": "string",
+            "description": "A URI reference that identifies the problem type. This URI provides context and additional\ninformation about the specific kind of error that occurred, allowing clients to understand\nthe nature of the problem beyond the status code alone.\n",
+            "example": "about:blank"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type. The `title` is intended to give a brief\noverview of the issue, making it easier for developers and users to quickly understand the nature\nof the problem without needing to delve into technical details.\n",
+            "example": "Bad Request"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem. The `detail` field\nprovides specific information about what went wrong in this particular instance, helping clients\nunderstand the exact issue and how they might resolve it.\n",
+            "example": "The request could not be understood by the server due to malformed syntax."
+          },
+          "errors": {
+            "type": "array",
+            "description": "An array of objects containing information about errors in the request. Each object in the array\ntypically includes details such as the field that caused the error and a human-readable message\nexplaining the issue. This is particularly useful for validation errors where multiple issues\nmight need to be communicated to the client.\n",
+            "items": {
+              "$ref": "#/components/schemas/Error_ErrorDetailsEntity"
+            }
+          }
+        },
+        "description": "**Bad Request (400)**\n\nThis entity represents a Bad Request error (HTTP 400 status code).\nA Bad Request occurs when the API request parameters provided by the client\ndo not conform to the expected format or the OpenAPI schema defined for the endpoint.\n\nCommon reasons for a Bad Request include:\n- Missing required parameters.\n- Invalid data types.\n- Parameters that fail validation checks according to the API's specification.\n\nClients should review their request against the API documentation to correct any issues\nbefore resubmitting the request.\n",
+        "x-tags": [
+          "Errors"
+        ]
+      },
+      "Error_ErrorDetailsEntity": {
+        "required": [
+          "detail",
+          "pointer"
+        ],
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "description": "This field provides a detailed description of the error encountered, helping the client\nunderstand what went wrong. It is particularly useful for validation errors or other\nclient-related issues. The `detail` should be clear and concise, providing enough\ninformation for the client to identify and correct the problem.\n",
+            "example": "The provided email address is invalid."
+          },
+          "pointer": {
+            "type": "string",
+            "description": "A JSON Pointer [RFC 6901] that indicates the location in the request entity\nwhere the error occurred.\n\nThe `pointer` field provides a path to the element in the JSON document that caused the error.\nThis path is expressed as a JSON Pointer, as defined in RFC 6901, and it helps clients identify\nthe exact location of the issue in their request. The pointer typically follows the format of\n`#/path/to/field`, indicating the hierarchical path within the JSON structure.\n\n**Example:**\nA pointer to the 'email' field in the request:\n```json\n\"#/user/email\"\n```\n",
+            "example": "#/user/email"
+          }
+        }
+      },
+      "UnprocessableContent": {
+        "required": [
+          "detail",
+          "errors",
+          "status",
+          "title",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "The HTTP status code generated by the origin server for this occurrence of the problem.\n",
+            "format": "int32",
+            "example": 422
+          },
+          "type": {
+            "type": "string",
+            "description": "A URI reference that identifies the problem type. This URI provides context and additional\ninformation about the specific kind of error that occurred, allowing clients to understand\nthe nature of the problem beyond the status code alone.\n",
+            "example": "about:blank"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type. The `title` is intended to give a brief\noverview of the issue, making it easier for developers and users to quickly understand the nature\nof the problem without needing to delve into technical details.\n",
+            "example": "Unprocessable Content"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem. The `detail` field\nprovides specific information about what went wrong in this particular instance, helping clients\nunderstand the exact issue and how they might resolve it.\n",
+            "example": "The request could not be processed due to validation errors."
+          },
+          "errors": {
+            "type": "array",
+            "description": "An array of objects containing information about errors in the request. Each object in the array\ntypically includes details such as the field that caused the error and a human-readable message\nexplaining the issue. This is particularly useful for validation errors where multiple issues\nmight need to be communicated to the client.\n",
+            "items": {
+              "$ref": "#/components/schemas/Error_ErrorDetailsEntity"
+            }
+          }
+        },
+        "description": "**Unprocessable Content (422)**\n\nThis entity represents an Unprocessable Content error (HTTP 422 status code).\nThis error occurs when the server understands the content type of the request entity,\nand the syntax of the request is correct, but the server is unable to process the\ncontained instructions due to validation errors.\n\nTypical causes of this error include:\n- Failing server-side validation checks, such as invalid data formats or constraints.\n- Missing required fields that are necessary for processing the request.\n\nClients should review the validation errors returned in the response and correct\nany issues before resubmitting the request.\n",
+        "x-tags": [
+          "Errors"
+        ]
       },
       "Network_ConnectionEntity": {
         "required": [
@@ -838,7 +1098,8 @@
           "account_id",
           "id",
           "name",
-          "status"
+          "status",
+          "verified"
         ],
         "type": "object",
         "properties": {
@@ -876,6 +1137,11 @@
             "enum": [
               "verified"
             ]
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Whether the company has been verified.",
+            "example": true
           }
         }
       },
@@ -908,6 +1174,16 @@
           },
           "updated_at": {
             "type": "string",
+            "format": "date-time"
+          },
+          "accepted_at": {
+            "type": "string",
+            "description": "The date and time that the invitation was accepted",
+            "format": "date-time"
+          },
+          "declined_at": {
+            "type": "string",
+            "description": "The date and time that the invitation was declined",
             "format": "date-time"
           },
           "email": {
@@ -955,6 +1231,169 @@
             "description": "Invited By User Full Name"
           }
         }
+      },
+      "Network_CompanyProfileEntity": {
+        "required": [
+          "__type",
+          "created_at",
+          "id",
+          "lead_verticals",
+          "name",
+          "primary_business",
+          "roles",
+          "updated_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of this company's profile on the network",
+            "example": "615d14ddf52edffc9a52eec4"
+          },
+          "__type": {
+            "type": "string",
+            "enum": [
+              "Network::CompanyProfile"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the company",
+            "example": "We've been helping to protect homes longer than any other company in the business. Reliable service, innovative features & peace of mind from America's top security provider."
+          },
+          "facebook_url": {
+            "type": "string",
+            "description": "The URL to the company's Facebook page",
+            "example": "https://www.facebook.com/adt"
+          },
+          "instagram_url": {
+            "type": "string",
+            "description": "The URL to the company's Instagram page",
+            "example": "https://www.instagram.com/adt"
+          },
+          "lead_verticals": {
+            "type": "array",
+            "description": "The verticals that this company generates leads for",
+            "example": "Home Services",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Auto",
+                "Consumer Packaged Goods",
+                "Education",
+                "Financial Services",
+                "Home Services",
+                "Insurance",
+                "Recruiting",
+                "Other"
+              ]
+            }
+          },
+          "legal_name": {
+            "type": "string",
+            "description": "The legal name of the company",
+            "example": "American District Telegraph"
+          },
+          "linkedin_url": {
+            "type": "string",
+            "description": "The URL to the company's LinkedIn page",
+            "example": "https://www.linkedin.com/company/adt"
+          },
+          "logo_url": {
+            "type": "string",
+            "description": "The URL to your company logo. Must be png or SVG with dimentions of 180px wide by 40px high.",
+            "example": "https://www.adt.com/content/dam/adt7/images/adt-new-logo.svg"
+          },
+          "name": {
+            "type": "string",
+            "description": "The friendly name of the company. If not specified, the legal name will populate this property.",
+            "example": "ADT"
+          },
+          "primary_business": {
+            "type": "array",
+            "description": "A list of the industry categories in which this company operates",
+            "example": "Home Services",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Ad Agency",
+                "Consumer Packaged Goods",
+                "Education",
+                "Financial Services",
+                "Home Services",
+                "Insurance",
+                "Media",
+                "Recruiting",
+                "Other"
+              ]
+            }
+          },
+          "roles": {
+            "type": "array",
+            "description": "The roles of this company",
+            "example": "buys",
+            "items": {
+              "type": "string",
+              "enum": [
+                "buys",
+                "generates",
+                "sells",
+                "other"
+              ]
+            }
+          },
+          "twitter_url": {
+            "type": "string",
+            "description": "The URL to the company's Twitter page",
+            "example": "https://twitter.com/adt"
+          },
+          "website_url": {
+            "type": "string",
+            "description": "The URL of the company's corporate website.",
+            "example": "https://adt.com"
+          },
+          "mailing_address": {
+            "$ref": "#/components/schemas/Network_MailingAddressEntity"
+          }
+        }
+      },
+      "postApiNetworkInvitations": {
+        "required": [
+          "email",
+          "invited_by_id",
+          "registration_path"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The email address to which the invitation will be sent."
+          },
+          "invited_by_id": {
+            "type": "string",
+            "description": "The ID of the user who is sending the invitation."
+          },
+          "registration_path": {
+            "type": "string",
+            "description": "The path used for registration, determining the specific route for the invitee's registration.",
+            "enum": [
+              "leadconduit/seller"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "A brief message accompanying the invitation. This can provide additional context or details about the invitation."
+          }
+        },
+        "description": "Send an invitation to connect to an email address"
       }
     }
   },

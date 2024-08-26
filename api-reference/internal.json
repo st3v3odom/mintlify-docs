@@ -1,0 +1,126 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Internal API (Authenticated)",
+    "description": "This API is for superuser access and machine to machine requests.\n\nIt allows for operations on resources by specifying the resource without consideration of account membership privileges. The admin section of the Account's frontend uses this API for example. The backend processes of other apps, like Trustedform and LeadConduit, can also perform operations through this API without needing a current browser session, for example.\n\n### Authentication\nAuthentication is either:\n- using the browser session.\n- a Bearer token in the authorization header. This is a machine to machine token found in 1PW.\n",
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "//account.staging.activeprospect.com/api/internal"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Accounts",
+      "description": "An Account represents the customer. Users belong to accounts via memberships. The Account `id` is often referred to as `sso id`. The `api_key` on this resource is the primary means of API authentication. See the [Account Model](api/entities/internalApiSpec/AccountEntity)\n"
+    },
+    {
+      "name": "Billing",
+      "description": "Resources relating to wallets, including Lago transactions.\n"
+    },
+    {
+      "name": "Feature Subscriptions",
+      "description": "Toggle features on an account.\n"
+    },
+    {
+      "name": "Memberships",
+      "description": "Add a current user to an account\n"
+    },
+    {
+      "name": "Network",
+      "description": "Machine to machine operations primarily relating to connecting accounts.\n"
+    },
+    {
+      "name": "Subscriptions",
+      "description": "Legacy subscription mutations\n"
+    },
+    {
+      "name": "Users",
+      "description": "User mutations. Users belong to accounts via memberships.\n"
+    },
+    {
+      "name": "Conversions",
+      "description": "Legacy endpoints to convert accounts to different types\n"
+    },
+    {
+      "name": "Utility",
+      "description": "Utility resources used by the account's app\n"
+    },
+    {
+      "name": "Errors",
+      "description": "The Errors resource provides standardized error responses for the API. All error responses conform to the [RFC 9457 - Problem Details for HTTP APIs](https://www.rfc-editor.org/rfc/rfc9457.html) specification in order to return consistent and detailed errors.\n\n### Common Errors\n- **400 Bad Request**: The request could not be understood or was missing required parameters.\n- **401 Unauthorized**: Authentication failed or the user does not have permission for the requested operation.\n- **403 Forbidden**: Authentication succeeded but the authenticated user does not have access to the requested resource.\n- **404 Not Found**: The requested resource could not be found.\n- **422 Unprocessable Content**: Validation errors occurred when processing the request.\n- **500 Internal Server Error**: An unexpected error occurred on the server.\n\n### Example Error Response\n```json\n{\n  \"type\": \"about:blank\",\n  \"status\": 422,\n  \"title\": \"Unprocessable Content\",\n  \"detail\": \"The request could not be processed due to validation errors.\",\n  \"errors\": [\n    { \"pointer\": \"#/name\", \"detail\": \"can't be blank\" },\n    { \"pointer\": \"#/email\", \"detail\": \"is invalid\" }\n  ]\n}\n```\n"
+    }
+  ],
+  "paths": {
+    "/api/internal/network/audit_events": {
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Return all audit events for the network",
+        "description": "Return all audit events for the network",
+        "operationId": "getApiInternalNetworkAuditEvents",
+        "responses": {
+          "200": {
+            "description": "Return all audit events for the network",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEventEntity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuditEventEntity": {
+        "required": [
+          "__type",
+          "created_at",
+          "id",
+          "updated_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the record"
+          },
+          "__type": {
+            "type": "string",
+            "enum": [
+              "AuditEvent"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "account_id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "description": "AuditEventEntity model"
+      }
+    }
+  },
+  "x-original-swagger-version": "2.0"
+}

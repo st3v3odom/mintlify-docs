@@ -5,7 +5,13 @@ description: 'Network Related API Documentation'
 
 ## Welcome
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nunc id aliquam tincidunt, nisi urna lacinia nunc, nec tincidunt nulla nunc nec nunc. Sed euismod, nisl vel tincidunt aliquam, nunc nunc tincidunt nunc, nec tincidunt nunc nunc nec nunc. Sed euismod, nisl vel tincidunt.
+The Account’s API endpoints are split into three groups based on authentication method.
+
+The three groups and their authentication method are:
+
+- [**Network APIs](/api-reference/network):** uses Basic Authentication using the api_key of the account as the password.
+- [**Internal APIs**](https://ap.com/api/accounts/internal/endpoints#description/authentication): uses a Machine to Machine token for app to Accounts communication. It also uses browser session based authentication.
+- [**UI APIs**:](https://ap.com/api/accounts/ui/endpoints#description/authentication) uses browser session based authentication. These endpoints are used primarily by the Account frontend client. Endpoints relating to [Domains](https://www.notion.so/Domains-1c06b931b4bd4386a8db8acb9f1a6091?pvs=21) are available for TrustedForm and other product apps.
 
 ## Authentication
 
