@@ -53,13 +53,6 @@
           "group": "Network API",
           "pages": [
             {
-              "group": "Companies",
-              "pages": [
-                "api-reference/network/companies/list-all-companies",
-                "api-reference/network/companies/get-a-company"
-              ]
-            },
-            {
               "group": "Company",
               "pages": [
                 "api-reference/network/company/object",

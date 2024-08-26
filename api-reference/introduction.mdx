@@ -7,22 +7,17 @@ description: 'Network Related API Documentation'
 
 The Account’s API endpoints are split into three groups based on authentication method.
 
-The three groups and their authentication method are:
+<CardGroup>
+  <Card
+    title="Network API" icon="paintbrush" href="/api-reference/network">
+    Primarily used for creating connections between accounts. Uses basic authentication using the Account's API key.
+  </Card>
 
-- [**Network APIs](/api-reference/network):** uses Basic Authentication using the api_key of the account as the password.
-- [**Internal APIs**](https://ap.com/api/accounts/internal/endpoints#description/authentication): uses a Machine to Machine token for app to Accounts communication. It also uses browser session based authentication.
-- [**UI APIs**:](https://ap.com/api/accounts/ui/endpoints#description/authentication) uses browser session based authentication. These endpoints are used primarily by the Account frontend client. Endpoints relating to [Domains](https://www.notion.so/Domains-1c06b931b4bd4386a8db8acb9f1a6091?pvs=21) are available for TrustedForm and other product apps.
-
-## Authentication
-
-HTTP Basic Authentication is used.
-
-The `username` is ignored, but you must still provide one. You may use 'X' in place of a user name.
-
-The password is the API key of the targeted account.
-
-Here is an example, where `X` is the username and `123456789` is the api key of the account:
-
-```bash cURL
-  $ curl -X GET -uX:1234567890 -H 'Accept: application/json' https://account.staging.activeprospect.com/api/network/invitations
-```
+  <Card
+    title="Internal API"
+    icon="square-code"
+    href="/api-reference/internal"
+  >
+    User for superuser type operations on Accounts using a machine to machine key
+  </Card>
+</CardGroup>
