@@ -27,7 +27,7 @@
     },
     {
       "name": "API Reference",
-      "url": "/api-reference/network",
+      "url": "/api-reference/introduction",
       "icon": "square-terminal"
     }
   ],
@@ -52,6 +52,15 @@
         {
           "group": "Network API",
           "pages": [
+            "api-reference/network/introduction",
+            {
+              "group": "Account",
+              "pages": [
+                "api-reference/network/account/object",
+                "api-reference/network/account/get-account",
+                "api-reference/network/account/update-account"
+              ]
+            },
             {
               "group": "Company",
               "pages": [
@@ -73,6 +82,12 @@
                 "api-reference/network/invitations/list-received-invitations",
                 "api-reference/network/invitations/send-an-invitation-to-connect",
                 "api-reference/network/invitations/get-an-invitation-using-invite-code"
+              ]
+            },
+            {
+              "group": "Errors",
+              "pages": [
+                "api-reference/errors/unauthorized"
               ]
             }
           ]
