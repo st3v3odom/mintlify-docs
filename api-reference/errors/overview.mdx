@@ -1,0 +1,14 @@
+---
+title: 'Errors'
+description: 'Errors Overview'
+---
+
+The Errors resource provides standardized error responses for the API. All error responses conform to the [RFC 9457 - Problem Details for HTTP APIs specification](https://arc.net/l/quote/axbtkgmo) in order to return consistent and detailed errors.
+
+Common Errors
+- *400 Bad Request*: The request could not be understood or was missing required parameters.
+- *401 Unauthorized*: Authentication failed or the user does not have permission for the requested operation.
+- *403 Forbidden*: Authentication succeeded but the authenticated user does not have access to the requested resource.
+- *404 Not Found*: The requested resource could not be found.
+- *422 Unprocessable Content*: Validation errors occurred when processing the request.
+- *500 Internal Server Error*: An unexpected error occurred on the server.

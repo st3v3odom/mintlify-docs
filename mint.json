@@ -87,7 +87,12 @@
             {
               "group": "Errors",
               "pages": [
-                "api-reference/errors/unauthorized"
+                "api-reference/errors/overview",
+                "api-reference/errors/unauthorized",
+                "api-reference/errors/notfound",
+                "api-reference/errors/internalservererror",
+                "api-reference/errors/bad-request",
+                "api-reference/errors/unprocessablecontent"
               ]
             }
           ]
