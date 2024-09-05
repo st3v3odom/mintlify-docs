@@ -50,49 +50,60 @@
         "api-reference/introduction",
         "api-reference/kafka",
         {
-          "group": "Network API",
+          "group": "Teams",
           "pages": [
-            "api-reference/network/introduction",
+            "api-reference/teams/trustedform",
             {
-              "group": "Account",
+              "group": "Accounts",
               "pages": [
-                "api-reference/network/account/object",
-                "api-reference/network/account/get-account",
-                "api-reference/network/account/update-account"
-              ]
-            },
-            {
-              "group": "Company",
-              "pages": [
-                "api-reference/network/company/object",
-                "api-reference/network/company/get-company",
-                "api-reference/network/company/update-company"
-              ]
-            },
-            {
-              "group": "Connections",
-              "pages": [
-                "api-reference/network/connections/list-connections-of-a-company",
-                "api-reference/network/connections/get-a-connection"
-              ]
-            },
-            {
-              "group": "Invitations",
-              "pages": [
-                "api-reference/network/invitations/list-received-invitations",
-                "api-reference/network/invitations/send-an-invitation-to-connect",
-                "api-reference/network/invitations/get-an-invitation-using-invite-code"
-              ]
-            },
-            {
-              "group": "Errors",
-              "pages": [
-                "api-reference/errors/overview",
-                "api-reference/errors/unauthorized",
-                "api-reference/errors/notfound",
-                "api-reference/errors/internalservererror",
-                "api-reference/errors/bad-request",
-                "api-reference/errors/unprocessablecontent"
+                {
+                  "group": "Network API",
+                  "pages": [
+                    "api-reference/network/introduction",
+                    {
+                      "group": "Account",
+                      "pages": [
+                        "api-reference/network/account/object",
+                        "api-reference/network/account/get-account",
+                        "api-reference/network/account/update-account"
+                      ]
+                    },
+                    {
+                      "group": "Company",
+                      "pages": [
+                        "api-reference/network/company/object",
+                        "api-reference/network/company/get-company",
+                        "api-reference/network/company/update-company"
+                      ]
+                    },
+                    {
+                      "group": "Connections",
+                      "pages": [
+                        "api-reference/network/connections/list-connections-of-a-company",
+                        "api-reference/network/connections/get-a-connection"
+                      ]
+                    },
+                    {
+                      "group": "Invitations",
+                      "pages": [
+                        "api-reference/network/invitations/list-received-invitations",
+                        "api-reference/network/invitations/send-an-invitation-to-connect",
+                        "api-reference/network/invitations/get-an-invitation-using-invite-code"
+                      ]
+                    },
+                    {
+                      "group": "Errors",
+                      "pages": [
+                        "api-reference/errors/overview",
+                        "api-reference/errors/unauthorized",
+                        "api-reference/errors/notfound",
+                        "api-reference/errors/internalservererror",
+                        "api-reference/errors/bad-request",
+                        "api-reference/errors/unprocessablecontent"
+                      ]
+                    }
+                  ]
+                }
               ]
             }
           ]
