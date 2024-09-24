@@ -29,11 +29,6 @@
       "name": "API Reference",
       "url": "/api-reference/introduction",
       "icon": "square-terminal"
-    },
-    {
-      "name": "TrustedForm",
-      "url": "api-reference",
-      "openapi": "api-reference/trustedform/trustedform.json"
     }
   ],
   "navigation": [
@@ -110,7 +105,13 @@
         {
           "group": "TrustedForm",
           "pages": [
-            "api-reference/trustedform/introduction"
+            "api-reference/trustedform/introduction",
+            {
+              "group": "Certificate URL",
+              "pages": [
+                "api-reference/trustedform/certificate-url/run-certificate-operations"
+              ]
+            }
           ]
         },
         {
