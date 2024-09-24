@@ -33,7 +33,7 @@
     {
       "name": "TrustedForm",
       "url": "api-reference",
-      "openapi": "/api-reference/trustedform/trustedform.json"
+      "openapi": "api-reference/trustedform/trustedform.json"
     }
   ],
   "navigation": [
