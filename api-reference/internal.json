@@ -1,51 +1,80 @@
 {
-  "openapi": "3.0.1",
   "info": {
-    "title": "Internal API (Authenticated)",
-    "description": "This API is for superuser access and machine to machine requests.\n\nIt allows for operations on resources by specifying the resource without consideration of account membership privileges. The admin section of the Account's frontend uses this API for example. The backend processes of other apps, like Trustedform and LeadConduit, can also perform operations through this API without needing a current browser session, for example.\n\n### Authentication\nAuthentication is either:\n- using the browser session.\n- a Bearer token in the authorization header. This is a machine to machine token found in 1PW.\n",
+    "title": "Internal API",
+    "description": "# About\n\nThis API is for superuser access and machine-to-machine requests.\n\nIt allows for operations on resources by specifying the resource without consideration of account membership privileges. The admin section of the Account's frontend uses this API for example. The backend processes of other apps, like Trustedform and LeadConduit, can also perform operations through this API without needing a current browser session, for example.\n\n## Authentication\n\nSupported methods of authentication:\n- Browser session\n- Bearer token in the authorization header. This is a machine-to-machine token found in 1Password.\n\n## Pagination\n\nWhen making requests to endpoints that support pagination, you can use the following optional parameters:\n\n- `page`: The current page number (default: 1)\n- `per_page`: Number of records per page (default: 10)\n- `offset`: The offset to start from (default: 0)\n\nExample request:\n```\nGET /api/internal/resource?page=3&per_page=20&offset=10\n```\n\nPagination information is included in the response headers:\n\n- `X-Total`: Total number of records\n- `X-Total-Pages`: Total number of pages\n- `X-Page`: Current page number\n- `X-Per-Page`: Number of records per page\n- `X-Next-Page`: Next page number (if available)\n- `X-Prev-Page`: Previous page number (if available)\n- `X-Offset`: Current offset\n\n## Kafka\n\n### Overview\n\nKafka is used to share data with other teams and systems. By aligning Kafka events with our OpenAPI documentation, we address past challenges with undocumented SQS messages and inconsistent data structures between APIs and SQS messages. This approach ensures consistency and reliability, as the data structures are documented and standardized across both Kafka and our API. Our goal is to gradually publish as much data as possible, starting with `create`, `update`, and `delete` (CUD) events for each resource. Every topic will include CUD events, with the flexibility to add supplementary event types as needed. Additionally, for each resource, we provide two API endpoints to fetch either a single record or multiple records with pagination, ensuring multiple and flexible methods for retrieving data.\n\n### Topic Naming Convention\n\nKafka topics follow a structured naming convention:\n\n```\naccounts.\u003Cresource\u003E\n```\n\nExamples:\n- `accounts.accounts`\n- `accounts.domains`\n- `accounts.network.invitations`\n\n### Header Properties\n\nEach Kafka event includes the following headers:\n\n- **event-type**: Specifies the type of event (e.g., `created`, `updated`, `deleted`, etc).\n- **event-version**: Represents the version of the OpenAPI schema that corresponds to the event's data structure.\n\nRefer to the OpenAPI documentation for detailed data structures and schemas associated with each event.\n",
     "version": "0.0.1"
   },
-  "servers": [
+  "swagger": "2.0",
+  "produces": [
+    "application/json"
+  ],
+  "host": "account.staging.activeprospect.com",
+  "basePath": "/api/internal",
+  "x-tagGroups": [
     {
-      "url": "//account.staging.activeprospect.com/api/internal"
+      "name": "Management",
+      "tags": [
+        "Accounts",
+        "Users"
+      ]
+    },
+    {
+      "name": "Network",
+      "tags": [
+        "Companies",
+        "Connections",
+        "Connection Invitations"
+      ]
+    },
+    {
+      "name": "Kafka",
+      "tags": [
+        "accounts.network.invitations"
+      ]
+    },
+    {
+      "name": "Utility",
+      "tags": [
+        "Errors"
+      ]
     }
   ],
   "tags": [
+    {
+      "name": "accounts",
+      "description": "Operations about accounts"
+    },
+    {
+      "name": "Domains",
+      "description": "Operations about Domains"
+    },
+    {
+      "name": "Utility",
+      "description": "Operations about Utilities"
+    },
     {
       "name": "Accounts",
       "description": "An Account represents the customer. Users belong to accounts via memberships. The Account `id` is often referred to as `sso id`. The `api_key` on this resource is the primary means of API authentication. See the [Account Model](api/entities/internalApiSpec/AccountEntity)\n"
     },
     {
-      "name": "Billing",
-      "description": "Resources relating to wallets, including Lago transactions.\n"
-    },
-    {
-      "name": "Feature Subscriptions",
-      "description": "Toggle features on an account.\n"
-    },
-    {
-      "name": "Memberships",
-      "description": "Add a current user to an account\n"
-    },
-    {
-      "name": "Network",
-      "description": "Machine to machine operations primarily relating to connecting accounts.\n"
-    },
-    {
-      "name": "Subscriptions",
-      "description": "Legacy subscription mutations\n"
-    },
-    {
       "name": "Users",
-      "description": "User mutations. Users belong to accounts via memberships.\n"
+      "description": "Represents individual users within the system.\n"
     },
     {
-      "name": "Conversions",
-      "description": "Legacy endpoints to convert accounts to different types\n"
+      "name": "Companies",
+      "description": "This resource serves as a directory of companies that have chosen to appear on the network. A company\nprofile describes a business who participates in the consent-based marketing industry.\n\nTo connect with a company, create a new connection invitation. Once recipient accepts your invitation,\na new connection will appear in the connections resource.\n"
     },
     {
-      "name": "Utility",
-      "description": "Utility resources used by the account's app\n"
+      "name": "Connections",
+      "description": "A connection is made when one company on the network invites another to connect and\nthe receiving company accepts the invitation.\n\nThe owner of an offer can share it with other accounts on the network to which the owner is connected.\nThat gives the other account permission to participate in the offer. If it's a buyer-owned offer, the\nbuyer shares an offer with their sellers. And those sellers share it with theirs, and so on. If it's a\nseller-owned offer, the seller shares it with their buyers. When the owner of an offer shares it with\nanother company on the network, an “Offer Share” is created.\n"
+    },
+    {
+      "name": "Connection Invitations",
+      "description": "Invitations are the primary means two companies becoming connected. A company in the network invites\nanother company to connect. Invitations are emailed to the recipient of the invitation. The recipient\ncan accept or simply take no action.\n\nIf the recipient of the invitation does not belong to an existing company within the network, the\nrecipient will be prompted to create a new account.\n\nIf the recipient is already a member of the network and has memberships with multiple companies, the\nrecipient will be prompted to select the company with which they would like to connect.\n\nInvitations expire after 30 days. If an invitation expires or the recipient did not receive the original\ninvitation, the sender can optionally resend the invitation. Resending an invitation will mark the current\ninvitation as pending and re-send the invite.\n"
+    },
+    {
+      "name": "accounts.network.invitations",
+      "description": "## Connection Invitations\n\nThe `accounts.network.invitations` topic is responsible for tracking connection invitations between companies in our system. This topic publishes events when an invitation is created, updated, accepted, declined, or deleted.\n\n## Headers\n\n- **event-type:** Indicates the type of event. Possible values are:\n  - `created`: Sent when a connection invitation is sent/created.\n  - `updated`: Sent when any property on an invitation changes.\n  - `accepted`: Sent when an invitation is accepted (also triggers `updated`).\n  - `declined`: Sent when an invitation is declined (also triggers `updated`).\n  - `deleted`: Sent when an invitation is deleted. Typically occurs if the associated company/account is deleted.\n"
     },
     {
       "name": "Errors",
@@ -53,74 +82,2311 @@
     }
   ],
   "paths": {
+    "/api/internal/accounts": {
+      "get": {
+        "summary": "Search accounts",
+        "description": "Search accounts",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page offset to fetch.",
+            "type": "integer",
+            "format": "int32",
+            "default": 1,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of results to return per page.",
+            "type": "integer",
+            "format": "int32",
+            "default": 25,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Pad a number of results.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "billing_type",
+            "description": "Filter by billing_type",
+            "type": "string",
+            "enum": [
+              "comped",
+              "contracted",
+              "self_service"
+            ],
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "description": "Search accounts by name or id",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "type": "string",
+            "default": "name",
+            "enum": [
+              "billing_type",
+              "created_at",
+              "financial_state",
+              "internal_only",
+              "name",
+              "state"
+            ],
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sort_dir",
+            "type": "string",
+            "default": "asc",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "description": "Filter by state",
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "suspended"
+            ],
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search accounts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Account Internal"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getApiInternalAccounts"
+      }
+    },
+    "/api/internal/accounts/{account_id}/billing/usages": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "description": "Account ID",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "postApiInternalAccountsAccountIdBillingUsages",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postApiInternalAccountsAccountIdBillingUsages"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "created Usage"
+          }
+        },
+        "tags": [
+          "accounts"
+        ],
+        "operationId": "postApiInternalAccountsAccountIdBillingUsages"
+      }
+    },
+    "/api/internal/accounts/{account_id}": {
+      "get": {
+        "summary": "Get an account",
+        "description": "Get an account",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "account_id",
+            "description": "Account ID",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get an account",
+            "schema": {
+              "$ref": "#/definitions/Account Internal"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Accounts"
+        ],
+        "operationId": "getApiInternalAccountsAccountId"
+      }
+    },
+    "/api/internal/domains": {
+      "get": {
+        "summary": "List domains",
+        "description": "List domains",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "account_id",
+            "description": "Filter domains by account ID",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page offset to fetch.",
+            "type": "integer",
+            "format": "int32",
+            "default": 1,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of results to return per page.",
+            "type": "integer",
+            "format": "int32",
+            "default": 25,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Pad a number of results.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List domains",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Domain"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          }
+        },
+        "tags": [
+          "Domains"
+        ],
+        "operationId": "getApiInternalDomains"
+      }
+    },
+    "/api/internal/domains/{domain_id}": {
+      "get": {
+        "description": "Return a domain",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "domain_id",
+            "description": "Domain ID",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return a domain",
+            "schema": {
+              "$ref": "#/definitions/Domain"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          }
+        },
+        "tags": [
+          "Domains"
+        ],
+        "operationId": "getApiInternalDomainsDomainId"
+      }
+    },
+    "/api/internal/network/companies": {
+      "get": {
+        "summary": "Search companies",
+        "description": "Search companies",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page offset to fetch.",
+            "type": "integer",
+            "format": "int32",
+            "default": 1,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of results to return per page.",
+            "type": "integer",
+            "format": "int32",
+            "default": 25,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Pad a number of results.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "description": "Search for companies by name",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "connectable_with[company_id]",
+            "description": "ID of the company to find potential connections for",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "connectable_with[seeking]",
+            "description": "Specifies whether the company is seeking sellers or buyers for potential connections",
+            "type": "string",
+            "enum": [
+              "sellers",
+              "buyers"
+            ],
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search companies",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Network Company"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Companies"
+        ],
+        "operationId": "getApiInternalNetworkCompanies"
+      }
+    },
+    "/api/internal/network/companies/{company_id}": {
+      "get": {
+        "summary": "Show company",
+        "description": "Show company",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "description": "Company ID",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Show company",
+            "schema": {
+              "$ref": "#/definitions/Network Company"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Companies"
+        ],
+        "operationId": "getApiInternalNetworkCompaniesCompanyId"
+      }
+    },
+    "/api/internal/network/connections": {
+      "get": {
+        "summary": "List all connections",
+        "description": "List all connections",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page offset to fetch.",
+            "type": "integer",
+            "format": "int32",
+            "default": 1,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of results to return per page.",
+            "type": "integer",
+            "format": "int32",
+            "default": 25,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Pad a number of results.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "from_company_id",
+            "description": "Filter connections by from company ID",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "to_company_id",
+            "description": "Filter connections by to company ID",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List all connections",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Network Connection Internal"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Connections"
+        ],
+        "operationId": "getApiInternalNetworkConnections"
+      }
+    },
+    "/api/internal/network/connections/{connection_id}": {
+      "get": {
+        "summary": "Show connection",
+        "description": "Show connection",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "connection_id",
+            "description": "Connection ID",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Show connection",
+            "schema": {
+              "$ref": "#/definitions/Network Connection Internal"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Connections"
+        ],
+        "operationId": "getApiInternalNetworkConnectionsConnectionId"
+      }
+    },
+    "/api/internal/network/invitations": {
+      "get": {
+        "summary": "List invitations",
+        "description": "List invitations",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page offset to fetch.",
+            "type": "integer",
+            "format": "int32",
+            "default": 1,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of results to return per page.",
+            "type": "integer",
+            "format": "int32",
+            "default": 25,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Pad a number of results.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "invited_by_company_id",
+            "description": "The ID of the company to filter by",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "The status of the invitation",
+            "type": "string",
+            "enum": [
+              "accepted",
+              "declined",
+              "expired",
+              "pending"
+            ],
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List invitations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Network Connection Invitation Internal"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Connection Invitations"
+        ],
+        "operationId": "getApiInternalNetworkInvitations"
+      }
+    },
+    "/api/internal/network/invitations/{invitation_id}": {
+      "get": {
+        "summary": "Show invitation",
+        "description": "Show invitation",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "invitation_id",
+            "description": "Invitation ID",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Show invitation",
+            "schema": {
+              "$ref": "#/definitions/Network Connection Invitation Internal"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Connection Invitations"
+        ],
+        "operationId": "getApiInternalNetworkInvitationsInvitationId"
+      }
+    },
     "/api/internal/network/audit_events": {
       "get": {
-        "tags": [
-          "Network"
-        ],
         "summary": "Return all audit events for the network",
         "description": "Return all audit events for the network",
-        "operationId": "getApiInternalNetworkAuditEvents",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page offset to fetch.",
+            "type": "integer",
+            "format": "int32",
+            "default": 1,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of results to return per page.",
+            "type": "integer",
+            "format": "int32",
+            "default": 25,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Pad a number of results.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "description": "Search audit events by message",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "type": "string",
+            "default": "created_at",
+            "enum": [
+              "created_at",
+              "message"
+            ],
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sort_dir",
+            "type": "string",
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "required": false
+          }
+        ],
         "responses": {
           "200": {
             "description": "Return all audit events for the network",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AuditEventEntity"
-                  }
-                }
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Audit Event"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Utility"
+        ],
+        "operationId": "getApiInternalNetworkAuditEvents"
+      }
+    },
+    "/api/internal/users": {
+      "get": {
+        "summary": "Return all users",
+        "description": "Return all users",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "description": "Search users by first name, last name, or email",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "description": "Sort by field",
+            "type": "string",
+            "default": "last_name",
+            "enum": [
+              "last_name",
+              "created_at",
+              "email",
+              "last_sign_in_at"
+            ],
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "sort_dir",
+            "description": "Sort direction",
+            "type": "string",
+            "default": "asc",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page offset to fetch.",
+            "type": "integer",
+            "format": "int32",
+            "default": 1,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "description": "Number of results to return per page.",
+            "type": "integer",
+            "format": "int32",
+            "default": 25,
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Pad a number of results.",
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return all users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
               }
             }
           }
-        }
+        },
+        "tags": [
+          "Users"
+        ],
+        "operationId": "getApiInternalUsers"
+      }
+    },
+    "/api/internal/users/{id}": {
+      "get": {
+        "summary": "Retrieve a user",
+        "description": "Retrieve a user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "User ID",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Unauthorized"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "operationId": "getApiInternalUsersId"
       }
     }
   },
-  "components": {
-    "schemas": {
-      "AuditEventEntity": {
-        "required": [
-          "__type",
-          "created_at",
-          "id",
-          "updated_at"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The ID of the record"
+  "definitions": {
+    "Account Internal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "The ID of the record"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Account::Internal"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "api_key": {
+          "type": "string",
+          "description": "The primary means of authentication with our APIs"
+        },
+        "billing_card_on_file": {
+          "type": "boolean",
+          "description": "Whether the account has a credit card on file. Nil if the account has never had a credit card on file. False if the account has had a credit card on file but it has been removed."
+        },
+        "billing_type": {
+          "type": "string",
+          "enum": [
+            "comped",
+            "contracted",
+            "self_service"
+          ],
+          "description": "Whether the company pays in advance (self-service) or in arrears (managed)"
+        },
+        "clearbit_data": {
+          "type": "object",
+          "description": "Clearbit data for the account"
+        },
+        "company_legal_name": {
+          "type": "string",
+          "description": "The legal name of the account's company"
+        },
+        "country_name": {
+          "type": "string",
+          "description": "The country name of the account"
+        },
+        "feature_subscriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Feature Subscription"
           },
-          "__type": {
-            "type": "string",
-            "enum": [
-              "AuditEvent"
-            ]
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "account_id": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          },
-          "type": {
+          "description": "Account's feature subscriptions"
+        },
+        "financial_state": {
+          "type": "string",
+          "enum": [
+            "paid",
+            "unpaid"
+          ],
+          "description": "Financial state is 'paid' when the account has a positive wallet balance and no unpaid invoices. Financial state is 'unpaid' if there is less than or equal to $0 in the account's wallet, the account has never funded their wallet, or if they have unpaid invoices."
+        },
+        "initial_payment": {
+          "type": "boolean",
+          "description": "Whether the account has made an initial payment"
+        },
+        "internal_only": {
+          "type": "boolean",
+          "description": "Account is an internal testing account"
+        },
+        "mfa_enabled": {
+          "type": "boolean",
+          "description": "MFA enabled for all users on the account"
+        },
+        "minimum_spend": {
+          "type": "number",
+          "format": "float",
+          "description": "The minimum amount the account must spend each month"
+        },
+        "name": {
+          "type": "string",
+          "description": "Account name. Globally unique."
+        },
+        "postal_code": {
+          "type": "string",
+          "description": "Postal code"
+        },
+        "registration_path": {
+          "type": "string",
+          "description": "The registration path used on creation"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "active",
+            "inactive",
+            "suspended"
+          ]
+        },
+        "time_zone": {
+          "type": "string",
+          "description": "The timezone of the account"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "tf-payg",
+            "tf-scriptonly",
+            "lc-free",
+            "legacy"
+          ],
+          "description": "(Deprecated) Legacy field that determined product access."
+        },
+        "cpl_enabled": {
+          "type": "boolean",
+          "description": "Whether or not CPL pricing is enabled for the account"
+        },
+        "keen_read_api_key": {
+          "type": "string",
+          "description": "The Keen read API key for the account"
+        },
+        "keen_project_id": {
+          "type": "string",
+          "description": "The Keen project ID for the account"
+        },
+        "keen_write_api_key": {
+          "type": "string",
+          "description": "The Keen write API key for the account"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at",
+        "api_key",
+        "billing_type",
+        "feature_subscriptions",
+        "name",
+        "state",
+        "time_zone"
+      ],
+      "x-tags": [
+        "Accounts"
+      ],
+      "title": "Internal",
+      "description": "Account Internal model"
+    },
+    "Feature Subscription": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "The ID of the record"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "FeatureSubscription"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "account_id": {
+          "type": "string",
+          "example": "507f1f77bcf86cd799439011",
+          "description": "Unique identifier for the account associated with this feature subscription"
+        },
+        "cancel_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2024-12-31T23:59:59Z",
+          "description": "Timestamp when the feature subscription is scheduled to be canceled"
+        },
+        "product_offering": {
+          "$ref": "#/definitions/Product Offering",
+          "description": "The product offering associated with this feature subscription"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "example": "active",
+          "description": "Current state of the feature subscription"
+        },
+        "active_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2024-01-15T10:30:00Z",
+          "description": "Timestamp when the feature subscription was set to active state"
+        },
+        "inactive_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2024-01-15T10:30:00Z",
+          "description": "Timestamp when the feature subscription was set to inactive state"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "account_id",
+        "product_offering",
+        "state"
+      ],
+      "x-tags": [
+        "Feature Subscriptions"
+      ],
+      "title": ""
+    },
+    "Product Offering": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "The ID of the record"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "ProductOffering"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "cancellation_warning_message": {
+          "type": "string"
+        },
+        "component": {
+          "type": "string",
+          "enum": [
+            "addons",
+            "base",
+            "certify",
+            "claim",
+            "consent",
+            "consent_plus_data",
+            "insights",
+            "insights_v3",
+            "paid",
+            "partner",
+            "ping",
+            "pro",
+            "retain",
+            "storage",
+            "verify"
+          ]
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
             "type": "string"
           }
         },
-        "description": "AuditEventEntity model"
-      }
+        "description": {
+          "type": "string"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Product Offering Feature"
+          }
+        },
+        "hidden": {
+          "type": "boolean"
+        },
+        "is_free": {
+          "type": "boolean"
+        },
+        "match_state_of": {
+          "type": "string"
+        },
+        "managed": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "order": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "product_id": {
+          "type": "string",
+          "enum": [
+            "lcx",
+            "suppressionlist",
+            "trustedform"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "component",
+        "depends_on",
+        "features",
+        "name",
+        "order",
+        "product_id"
+      ],
+      "title": ""
+    },
+    "Product Offering Feature": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "The ID of the record"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "ProductOffering::Feature"
+          ]
+        },
+        "billing_pricing_id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "request",
+            "certificate"
+          ]
+        },
+        "unit_action": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "name"
+      ],
+      "title": "Feature"
+    },
+    "BadRequest": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int32",
+          "enum": [400],
+          "example": 400,
+          "description": "The HTTP status code generated by the origin server for this occurrence of the problem.\n"
+        },
+        "type": {
+          "type": "string",
+          "example": "about:blank",
+          "description": "A URI reference that identifies the problem type. This URI provides context and additional\ninformation about the specific kind of error that occurred, allowing clients to understand\nthe nature of the problem beyond the status code alone.\n"
+        },
+        "title": {
+          "type": "string",
+          "example": "Bad Request",
+          "description": "A short, human-readable summary of the problem type. The `title` is intended to give a brief\noverview of the issue, making it easier for developers and users to quickly understand the nature\nof the problem without needing to delve into technical details.\n"
+        },
+        "detail": {
+          "type": "string",
+          "example": "The request could not be understood by the server due to malformed syntax.",
+          "description": "A human-readable explanation specific to this occurrence of the problem. The `detail` field\nprovides specific information about what went wrong in this particular instance, helping clients\nunderstand the exact issue and how they might resolve it.\n"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Error_ErrorDetailsEntity"
+          },
+          "description": "An array of objects containing information about errors in the request. Each object in the array\ntypically includes details such as the field that caused the error and a human-readable message\nexplaining the issue. This is particularly useful for validation errors where multiple issues\nmight need to be communicated to the client.\n"
+        }
+      },
+      "required": [
+        "status",
+        "type",
+        "title",
+        "detail",
+        "errors"
+      ],
+      "description": "**Bad Request (400)**\n\nThis entity represents a Bad Request error (HTTP 400 status code).\nA Bad Request occurs when the API request parameters provided by the client\ndo not conform to the expected format or the OpenAPI schema defined for the endpoint.\n\nCommon reasons for a Bad Request include:\n- Missing required parameters.\n- Invalid data types.\n- Parameters that fail validation checks according to the API's specification.\n\nClients should review their request against the API documentation to correct any issues\nbefore resubmitting the request.\n",
+      "x-tags": [
+        "Errors"
+      ],
+      "title": "Bad Request"
+    },
+    "Error_ErrorDetailsEntity": {
+      "type": "object",
+      "properties": {
+        "detail": {
+          "type": "string",
+          "example": "The provided email address is invalid.",
+          "description": "This field provides a detailed description of the error encountered, helping the client\nunderstand what went wrong. It is particularly useful for validation errors or other\nclient-related issues. The `detail` should be clear and concise, providing enough\ninformation for the client to identify and correct the problem.\n"
+        },
+        "pointer": {
+          "type": "string",
+          "example": "#/user/email",
+          "description": "A JSON Pointer [RFC 6901] that indicates the location in the request entity\nwhere the error occurred.\n\nThe `pointer` field provides a path to the element in the JSON document that caused the error.\nThis path is expressed as a JSON Pointer, as defined in RFC 6901, and it helps clients identify\nthe exact location of the issue in their request. The pointer typically follows the format of\n`#/path/to/field`, indicating the hierarchical path within the JSON structure.\n\n**Example:**\nA pointer to the 'email' field in the request:\n```json\n\"#/user/email\"\n```\n"
+        }
+      },
+      "required": [
+        "detail",
+        "pointer"
+      ],
+      "title": "Error Details"
+    },
+    "Unauthorized": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int32",
+          "enum": [401],
+          "example": 401,
+          "description": "The HTTP status code generated by the origin server for this occurrence of the problem.\n"
+        },
+        "type": {
+          "type": "string",
+          "example": "about:blank",
+          "description": "A URI reference that identifies the problem type. This URI provides context and additional\ninformation about the specific kind of error that occurred, allowing clients to understand\nthe nature of the problem beyond the status code alone.\n"
+        },
+        "title": {
+          "type": "string",
+          "example": "Unauthorized",
+          "description": "A short, human-readable summary of the problem type. The `title` is intended to give a brief\noverview of the issue, making it easier for developers and users to quickly understand the nature\nof the problem without needing to delve into technical details.\n"
+        },
+        "detail": {
+          "type": "string",
+          "example": "You are not authorized to access this resource.",
+          "description": "A human-readable explanation specific to this occurrence of the problem. The `detail` field\nprovides specific information about what went wrong in this particular instance, helping clients\nunderstand the exact issue and how they might resolve it.\n"
+        }
+      },
+      "required": [
+        "status",
+        "type",
+        "title",
+        "detail"
+      ],
+      "description": "**Unauthorized (401)**\n\nThis entity represents an Unauthorized error (HTTP 401 status code).\nAn Unauthorized error occurs when the client attempts to access a resource without\nproper authentication or authorization.\n\nThis error typically happens when:\n- The client fails to provide valid credentials.\n- The credentials provided do not grant the necessary permissions to access the resource.\n\nClients should ensure they are authenticated and have the appropriate permissions\nbefore retrying the request.\n",
+      "x-tags": [
+        "Errors"
+      ],
+      "title": "Unauthorized"
+    },
+    "InternalServerError": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int32",
+          "enum": [500],
+          "example": 500,
+          "description": "The HTTP status code generated by the origin server for this occurrence of the problem.\n"
+        },
+        "type": {
+          "type": "string",
+          "example": "about:blank",
+          "description": "A URI reference that identifies the problem type. This URI provides context and additional\ninformation about the specific kind of error that occurred, allowing clients to understand\nthe nature of the problem beyond the status code alone.\n"
+        },
+        "title": {
+          "type": "string",
+          "example": "Internal Server Error",
+          "description": "A short, human-readable summary of the problem type. The `title` is intended to give a brief\noverview of the issue, making it easier for developers and users to quickly understand the nature\nof the problem without needing to delve into technical details.\n"
+        },
+        "detail": {
+          "type": "string",
+          "example": "An unexpected error occurred.",
+          "description": "A human-readable explanation specific to this occurrence of the problem. The `detail` field\nprovides specific information about what went wrong in this particular instance, helping clients\nunderstand the exact issue and how they might resolve it.\n"
+        }
+      },
+      "required": [
+        "status",
+        "type",
+        "title",
+        "detail"
+      ],
+      "description": "**Internal Server Error (500)**\n\nThis entity represents an Internal Server Error (HTTP 500 status code).\nAn Internal Server Error occurs when the server encounters an unexpected condition\nthat prevents it from fulfilling the request.\n\nCommon causes of an Internal Server Error include:\n- Unhandled exceptions or runtime errors within the server.\n- Issues with server configuration or dependencies.\n- Resource limitations, such as memory or disk space constraints.\n\nThis error indicates a problem on the server side that the client cannot resolve.\nClients may need to retry the request later or contact support if the issue persists.\n",
+      "x-tags": [
+        "Errors"
+      ],
+      "title": "Internal Server Error"
+    },
+    "postApiInternalAccountsAccountIdBillingUsages": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "description": "ID of the product"
+        },
+        "component_id": {
+          "type": "string",
+          "description": "ID of the component"
+        },
+        "quantity": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Quantity of the usage"
+        }
+      },
+      "required": [
+        "product_id",
+        "component_id",
+        "quantity"
+      ]
+    },
+    "Domain": {
+      "type": "object",
+      "properties": {
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Domain"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "The ID of the record"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "account_id": {
+          "type": "string",
+          "description": "Account ID that owns the domain"
+        },
+        "checked_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time that the domain was last checked"
+        },
+        "code": {
+          "type": "string",
+          "description": "Verification code"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain name without subdomain"
+        },
+        "error_code": {
+          "type": "string"
+        },
+        "error_message": {
+          "type": "string"
+        },
+        "is_company": {
+          "type": "boolean"
+        },
+        "is_subdomain": {
+          "type": "boolean",
+          "description": "Whether the domain name is a subdomain of a domain"
+        },
+        "name": {
+          "type": "string",
+          "description": "Domain name"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "processing",
+            "queued"
+          ]
+        },
+        "txt_code": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "verify_all_subdomains": {
+          "type": "boolean",
+          "description": "Whether all subdomains should be verified"
+        },
+        "verified_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Time that the domain was last verified"
+        }
+      },
+      "required": [
+        "__type",
+        "id",
+        "account_id",
+        "code",
+        "name",
+        "status",
+        "txt_code"
+      ],
+      "x-tags": [
+        "Domains"
+      ],
+      "title": "",
+      "description": "Domain model"
+    },
+    "NotFound": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int32",
+          "enum": [404],
+          "example": 404,
+          "description": "The HTTP status code generated by the origin server for this occurrence of the problem.\n"
+        },
+        "type": {
+          "type": "string",
+          "example": "about:blank",
+          "description": "A URI reference that identifies the problem type. This URI provides context and additional\ninformation about the specific kind of error that occurred, allowing clients to understand\nthe nature of the problem beyond the status code alone.\n"
+        },
+        "title": {
+          "type": "string",
+          "example": "Not Found",
+          "description": "A short, human-readable summary of the problem type. The `title` is intended to give a brief\noverview of the issue, making it easier for developers and users to quickly understand the nature\nof the problem without needing to delve into technical details.\n"
+        },
+        "detail": {
+          "type": "string",
+          "example": "The requested resource could not be found.",
+          "description": "A human-readable explanation specific to this occurrence of the problem. The `detail` field\nprovides specific information about what went wrong in this particular instance, helping clients\nunderstand the exact issue and how they might resolve it.\n"
+        }
+      },
+      "required": [
+        "status",
+        "type",
+        "title",
+        "detail"
+      ],
+      "description": "**Not Found (404)**\n\nThis entity represents a Not Found error (HTTP 404 status code).\nA Not Found error occurs when the requested resource could not be found on the server.\nThis might happen if the resource has been deleted or the client has requested a resource\nthat does not exist.\n\nClients should verify the correctness of the requested resource before retrying the request.\n",
+      "x-tags": [
+        "Errors"
+      ],
+      "title": "Not Found"
+    },
+    "Network Company": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "ID of this company's profile on the network"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::Company"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string",
+          "example": "We've been helping to protect homes longer than any other company in the business. Reliable service, innovative features & peace of mind from America's top security provider.",
+          "description": "The description of the company"
+        },
+        "facebook_url": {
+          "type": "string",
+          "example": "https://www.facebook.com/adt",
+          "description": "The URL to the company's Facebook page"
+        },
+        "instagram_url": {
+          "type": "string",
+          "example": "https://www.instagram.com/adt",
+          "description": "The URL to the company's Instagram page"
+        },
+        "verticals": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "education",
+              "financial_services",
+              "healthcare",
+              "home_services",
+              "insurance",
+              "legal_services",
+              "real_estate",
+              "recruiting",
+              "retail",
+              "cpg",
+              "travel",
+              "other"
+            ]
+          },
+          "example": [
+            "home_services",
+            "insurance"
+          ],
+          "description": "Lead verticals this company works with (from the onboarding questionnaire)"
+        },
+        "legal_name": {
+          "type": "string",
+          "example": "American District Telegraph",
+          "description": "The legal name of the company"
+        },
+        "linkedin_url": {
+          "type": "string",
+          "example": "https://www.linkedin.com/company/adt",
+          "description": "The URL to the company's LinkedIn page"
+        },
+        "logo_url": {
+          "type": "string",
+          "example": "https://www.adt.com/content/dam/adt7/images/adt-new-logo.svg",
+          "description": "The URL to your company logo. Must be png or SVG with dimentions of 180px wide by 40px high."
+        },
+        "name": {
+          "type": "string",
+          "example": "ADT",
+          "description": "The friendly name of the company. If not specified, the legal name will populate this property."
+        },
+        "primary_business": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Ad Agency",
+              "Consumer Packaged Goods",
+              "Education",
+              "Financial Services",
+              "Home Services",
+              "Insurance",
+              "Media",
+              "Recruiting",
+              "Other"
+            ]
+          },
+          "example": "home_services",
+          "description": "A list of the industry categories in which this company operates"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "buys",
+              "generates",
+              "sells",
+              "other"
+            ]
+          },
+          "example": "buys",
+          "description": "The roles of this company"
+        },
+        "twitter_url": {
+          "type": "string",
+          "example": "https://twitter.com/adt",
+          "description": "The URL to the company's Twitter page"
+        },
+        "website_url": {
+          "type": "string",
+          "example": "https://adt.com",
+          "description": "The URL of the company's corporate website."
+        },
+        "mailing_address": {
+          "$ref": "#/definitions/Network Company Mailing Address"
+        },
+        "account_id": {
+          "type": "string",
+          "example": "615d407995fefd72e4a7592b",
+          "description": "This company's account ID"
+        },
+        "allow_invites_from": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "buyers",
+              "sellers",
+              "publishers"
+            ]
+          },
+          "description": "Connection invitations will be allowed from these types of companies on the network."
+        },
+        "visible_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "buyers",
+              "sellers",
+              "publishers"
+            ]
+          },
+          "description": "Your company profile will be visible to these types of companies on the network."
+        },
+        "segment_type": {
+          "type": "string",
+          "enum": [
+            "buyer",
+            "seller",
+            "buyer_seller",
+            "generic"
+          ],
+          "example": "buyer",
+          "description": "The onboarding segment type (buyer, seller, buyer_seller, generic)"
+        },
+        "other_text": {
+          "type": "string",
+          "example": "Custom vertical description",
+          "description": "Custom text when 'other' vertical is selected"
+        },
+        "company_type": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "Ad Agency",
+            "Lead Buyer"
+          ],
+          "description": "Types of company (from the onboarding questionnaire)"
+        },
+        "registration_completed_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2024-01-15T10:30:00Z",
+          "description": "When the company completed onboarding registration"
+        },
+        "profile_completed_at": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2024-01-15T10:30:00Z",
+          "description": "When the company completed profile completion"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at",
+        "name",
+        "primary_business",
+        "roles",
+        "account_id",
+        "allow_invites_from",
+        "visible_to"
+      ],
+      "x-tags": [
+        "Companies"
+      ],
+      "title": "",
+      "description": "Network Company model"
+    },
+    "Network Company Mailing Address": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "The ID of the record"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::Company::MailingAddress"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "address_1": {
+          "type": "string",
+          "example": "1 Town Center Rd",
+          "description": "The street number and street name"
+        },
+        "address_2": {
+          "type": "string",
+          "description": "Unit or suite number"
+        },
+        "city": {
+          "type": "string",
+          "example": "Boca Raton",
+          "description": "The name of the city"
+        },
+        "postal_code": {
+          "type": "string",
+          "example": "33486",
+          "description": "The postal code"
+        },
+        "state": {
+          "type": "string",
+          "example": "Florida",
+          "description": "The locality of the city"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at",
+        "address_1",
+        "city",
+        "postal_code",
+        "state"
+      ],
+      "title": "Mailing Address"
+    },
+    "Network Connection Internal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "ID of this connection"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::Connection::Internal"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "example": "support@activeprospect.com",
+          "description": "The user's email who created this connection"
+        },
+        "from_company": {
+          "$ref": "#/definitions/Network Company",
+          "description": "This company represents the seller of the connection"
+        },
+        "from_company_permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "request_confirmed_owner_data",
+              "request_domain_ownership_confirmation",
+              "view_submission_docs"
+            ]
+          },
+          "example": [
+            "request_domain_ownership_confirmation",
+            "view_submission_docs"
+          ],
+          "description": "The seller permissions that apply to the buyer. Seller permissions: request_confirmed_owner_data, request_domain_ownership_confirmation, view_submission_docs"
+        },
+        "to_company": {
+          "$ref": "#/definitions/Network Company",
+          "description": "This company represents the buyer of the connection"
+        },
+        "to_company_permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "request_confirmed_owner_data",
+              "request_domain_ownership_confirmation",
+              "view_submission_docs"
+            ]
+          },
+          "example": [
+            "request_domain_ownership_confirmation",
+            "view_submission_docs"
+          ],
+          "description": "The buyer permissions that apply to the seller. Buyer permissions: request_confirmed_owner_data, request_domain_ownership_confirmation, view_submission_docs"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at",
+        "created_by",
+        "from_company",
+        "to_company"
+      ],
+      "x-tags": [
+        "Connections"
+      ],
+      "title": "Internal",
+      "description": "Network Connection Internal model"
+    },
+    "Network Connection Invitation Internal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "The ID of the invitation. Needed for accepting an invite progammatically"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "Network::ConnectionInvitation::Internal"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "accepted_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time that the invitation was accepted"
+        },
+        "declined_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time that the invitation was declined"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time that the invitation expires"
+        },
+        "resend_allowed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time that the invitation can be resent"
+        },
+        "sent_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time that the invitation was sent"
+        },
+        "company_id": {
+          "type": "string",
+          "description": "The ID of the company that is being invited to connect"
+        },
+        "connection_id": {
+          "type": "string",
+          "description": "The ID of the connection. The connection is created when the invitee accepts the invitation."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the person being invited to connect"
+        },
+        "invited_by_id": {
+          "type": "string",
+          "description": "The ID of the user who invited the recipient"
+        },
+        "invited_by_company_id": {
+          "type": "string",
+          "description": "The ID of the company who invited the recipient"
+        },
+        "registration_path": {
+          "type": "string",
+          "enum": [
+            "leadconduit/seller",
+            "leadconduit/buyer",
+            "trustedform/confirmed_owner_data",
+            "trustedform/domain_owner"
+          ],
+          "description": "The path used for registration, determining the specific route for the invitee's registration."
+        },
+        "resend_allowed": {
+          "type": "boolean",
+          "description": "Whether the invitation can be resent"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "declined",
+            "expired",
+            "pending"
+          ],
+          "description": "Invitation status. `pending` - Waiting to be accepted or declined. `accepted` - Invite accepted and connection created. `declined` - Invite declined. `expired` - Invite expired."
+        },
+        "accepted_by_company_id": {
+          "type": "string",
+          "description": "The ID of the company that accepted the invitation"
+        },
+        "accepted_by_id": {
+          "type": "string",
+          "description": "The ID of the user that accepted the invitation"
+        },
+        "code": {
+          "type": "string",
+          "description": "The code of the invitation. Needed for accepting an invite programmatically"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at",
+        "resend_allowed_at",
+        "sent_at",
+        "invited_by_id",
+        "invited_by_company_id",
+        "registration_path",
+        "resend_allowed",
+        "status",
+        "code"
+      ],
+      "x-tags": [
+        "Connection Invitations"
+      ],
+      "title": "Internal",
+      "description": "Network Connection Invitation Internal model"
+    },
+    "Audit Event": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "The ID of the record"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "AuditEvent"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "message": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "account_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "created_at",
+        "updated_at"
+      ],
+      "x-tags": [
+        "Audit Events"
+      ],
+      "title": "",
+      "description": "Audit Event model"
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "615d14ddf52edffc9a52eec4",
+          "description": "The ID of the record"
+        },
+        "__type": {
+          "type": "string",
+          "enum": [
+            "User"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "access_locked": {
+          "type": "boolean"
+        },
+        "auth0_mfa_invite_sent_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time the user was invited to enable MFA"
+        },
+        "auth_id": {
+          "type": "string",
+          "description": "The Auth0 user id"
+        },
+        "auth0_mfa_enabled": {
+          "type": "boolean",
+          "description": "MFA enabled for this user at Auth0"
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "duplicate_domain": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "email_domain": {
+          "type": "string",
+          "description": "The extracted email domain of the user"
+        },
+        "employee": {
+          "type": "boolean"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "last_sign_in_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "intercom_hash": {
+          "type": "string"
+        },
+        "is_duplicated_account": {
+          "type": "boolean"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "registration_completed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "registration_metadata": {
+          "$ref": "#/definitions/Registration Metadata"
+        },
+        "registration_path": {
+          "type": "string"
+        },
+        "superuser": {
+          "type": "boolean"
+        },
+        "zendesk_jwt": {
+          "type": "string"
+        },
+        "unconfirmed_email": {
+          "type": "string",
+          "description": "The user's unconfirmed email address, if present"
+        }
+      },
+      "required": [
+        "id",
+        "__type",
+        "email",
+        "first_name",
+        "full_name",
+        "last_name"
+      ],
+      "x-tags": [
+        "Users"
+      ],
+      "title": "",
+      "description": "User model"
+    },
+    "Registration Metadata": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "return_to_path": {
+          "type": "string"
+        },
+        "product_path": {
+          "type": "string"
+        },
+        "step": {
+          "type": "string"
+        }
+      },
+      "title": "Metadata"
     }
-  },
-  "x-original-swagger-version": "2.0"
+  }
 }
